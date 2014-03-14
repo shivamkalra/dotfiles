@@ -29,6 +29,7 @@ export EDITOR=emacs
 export TERMINAL=urxvt
 export BROWSER=chromium
 export PS1=""
+export PROMPT_COMMAND='printf "\033]0;%s\007" "${PWD/#$HOME/~}"'
 ################################################################
 # Aliases                                                      #
 ################################################################
