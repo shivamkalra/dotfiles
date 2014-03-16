@@ -10,7 +10,8 @@ local beautiful = require("beautiful")
 -- Notification library
 local naughty = require("naughty")
 local menubar = require("menubar")
- local battery = require("battery")
+local battery = require("battery")
+local volume = require("volume")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -107,9 +108,10 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- {{{ Wibox
 -- Create a textclock widget
 mytextclock = awful.widget.textclock(" %a %b %d, %I:%M %p ", 60)
-
 -- create a battery widget
-batterywidget = wibox.widget.textbox()
+battery_widget = wibox.widget.textbox()
+-- create a volume widget
+volume_widget = wibox.widget.textbox()
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -189,7 +191,8 @@ for s = 1, screen.count() do
    local right_layout = wibox.layout.fixed.horizontal()
    if s == 1 then right_layout:add(wibox.widget.systray()) end
    right_layout:add(mytextclock)
-   right_layout:add(batterywidget)
+   right_layout:add(volume_widget)
+   right_layout:add(battery_widget)
    right_layout:add(mylayoutbox[s])
 
    -- Now bring it all together (with the tasklist in the middle)
@@ -213,6 +216,19 @@ root.buttons(awful.util.table.join(
 
 -- {{{ Key bindings
 globalkeys = awful.util.table.join(
+   awful.key({ }, "XF86AudioRaiseVolume",
+      function ()
+         awful.util.spawn("amixer set Master 9%+", false)
+         volume_widget:set_text(volume_info())
+   end),
+   awful.key({ }, "XF86AudioLowerVolume", function ()
+         awful.util.spawn("amixer set Master 9%-", false)
+         volume_widget:set_text(volume_info())
+   end),
+   awful.key({ }, "XF86AudioMute", function ()
+         awful.util.spawn("amixer set Master toggle", false)
+         volume_widget:set_text(volume_info())
+   end),
    awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
    awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
    awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
@@ -387,12 +403,13 @@ awful.rules.rules = {
 -- {{{ Signals
 -- Signal function to execute when a new client appears.
 
-batterywidget_timer = timer({timeout = 5})
-batterywidget_timer:connect_signal("timeout", function()
-    batterywidget:set_text(batteryInfo("BAT0"))
-  end)
-batterywidget_timer:start()
-batterywidget:set_text(batteryInfo("BAT0"))
+battery_widget_timer = timer({timeout = 1})
+battery_widget_timer:connect_signal("timeout", function()
+                                       battery_widget:set_text(battery_info("BAT0"))
+end)
+battery_widget_timer:start()
+battery_widget:set_text(battery_info("BAT0"))
+volume_widget:set_text(volume_info())
 
 client.connect_signal("manage", function (c, startup)
                          -- Enable sloppy focus

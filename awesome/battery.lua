@@ -5,7 +5,7 @@
 local naughty = require("naughty")
 local beautiful = require("beautiful")
 
-function batteryInfo(adapter)
+function battery_info(adapter)
   local fcur = io.open("/sys/class/power_supply/"..adapter.."/energy_now")
   local fcap = io.open("/sys/class/power_supply/"..adapter.."/energy_full")
   local fsta = io.open("/sys/class/power_supply/"..adapter.."/status")
