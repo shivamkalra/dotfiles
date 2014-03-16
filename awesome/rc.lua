@@ -10,6 +10,7 @@ local beautiful = require("beautiful")
 -- Notification library
 local naughty = require("naughty")
 local menubar = require("menubar")
+ local battery = require("battery")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -107,6 +108,9 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- Create a textclock widget
 mytextclock = awful.widget.textclock(" %a %b %d, %I:%M %p ", 60)
 
+-- create a battery widget
+batterywidget = wibox.widget.textbox()
+
 -- Create a wibox for each screen and add it
 mywibox = {}
 mypromptbox = {}
@@ -185,6 +189,7 @@ for s = 1, screen.count() do
    local right_layout = wibox.layout.fixed.horizontal()
    if s == 1 then right_layout:add(wibox.widget.systray()) end
    right_layout:add(mytextclock)
+   right_layout:add(batterywidget)
    right_layout:add(mylayoutbox[s])
 
    -- Now bring it all together (with the tasklist in the middle)
@@ -192,6 +197,7 @@ for s = 1, screen.count() do
    layout:set_left(left_layout)
    layout:set_middle(mytasklist[s])
    layout:set_right(right_layout)
+
 
    mywibox[s]:set_widget(layout)
 end
@@ -380,6 +386,14 @@ awful.rules.rules = {
 
 -- {{{ Signals
 -- Signal function to execute when a new client appears.
+
+batterywidget_timer = timer({timeout = 5})
+batterywidget_timer:connect_signal("timeout", function()
+    batterywidget:set_text(batteryInfo("BAT0"))
+  end)
+batterywidget_timer:start()
+batterywidget:set_text(batteryInfo("BAT0"))
+
 client.connect_signal("manage", function (c, startup)
                          -- Enable sloppy focus
                          c:connect_signal("mouse::enter", function(c)
