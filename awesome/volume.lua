@@ -5,7 +5,7 @@ function volume_info()
 
    -- local volume = tonumber(string.match(status, "(%d?%d?%d)%%")) / 100
    local volume = string.match(status, "(%d?%d?%d)%%")
-   volume = string.format("% 3d", volume)
+   volume = string.format("%3d", volume)
 
    status = string.match(status, "%[(o[^%]]*)%]")
 
@@ -16,5 +16,7 @@ function volume_info()
        -- For the mute button
        volume = volume .. "M"
    end
-   return volume
+
+   volume = volume:gsub("^%s*(.-)%s*$", "%1")
+   return 'v'..volume
 end
