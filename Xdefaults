@@ -26,7 +26,7 @@ urxvt*font: xft:terminus:size=8
 
 URxvt*xftAntialias: true
 
-# solarized
+! solarized
 *background: #002b36
 *foreground: #657b83
 !!*fading: 40
