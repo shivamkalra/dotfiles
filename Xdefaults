@@ -22,7 +22,8 @@ URxvt*underlineColor: yellow
 URxvt*saveLines: 10000
 URxvt*buffered: true
 URxvt*hold: false
-urxvt*font: xft:terminus:size=8
+!URxvt*font:              xft:inconsolata:pixelsize=11
+URxvt*font:*-*-fixed-medium-r-normal--12-110-*-*-*-*-iso8859-1
 
 URxvt*xftAntialias: true
 
