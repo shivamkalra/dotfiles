@@ -1,5 +1,6 @@
 (require 'package)
 (require 'whitespace)
+
 (add-to-list 'package-archives 
     '("marmalade" .
       "http://marmalade-repo.org/packages/"))
@@ -57,6 +58,8 @@ your recently and most frequently used commands.")
  )
 (load-theme 'solarized-dark t)
 (menu-bar-mode -1)
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
 
 ;; 80 column
 (setq whitespace-line-column 80) ;; limit line length
