@@ -12,6 +12,7 @@ local naughty = require("naughty")
 local menubar = require("menubar")
 local battery = require("battery")
 local volume = require("volume")
+local sexec  = awful.util.spawn_with_shell
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -480,4 +481,15 @@ end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+-- }}}
+
+-- {{{
+-- Auto start
+function run_once(prg)
+   if not prg then
+      do return nil end
+   end
+   sexec("pgrep -u $USER -x " .. prg .. " || (" .. prg .. ")")
+end
+run_once("clipit")
 -- }}}
