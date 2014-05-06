@@ -37,8 +37,6 @@ export PROMPT_COMMAND='printf "\033]0;%s\007" "${PWD/#$HOME/~}"'
 alias emacs="TERM=rxvt /bin/emacs -nw"
 alias ls='ls -h --color=auto'
 alias h='cd'
-alias ..='cd ..'
-alias cd..='cd ..'
 alias cim='vim'
 alias back='cd $OLDPWD'
 alias root='sudo su'
