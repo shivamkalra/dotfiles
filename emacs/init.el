@@ -6,6 +6,8 @@
       "http://marmalade-repo.org/packages/"))
 (package-initialize)
 
+(add-to-list 'load-path "~/.emacs.d/")
+(require 'appearance)
 (add-to-list 'auto-mode-alist '("\\.erl?$" . erlang-mode))
 (add-to-list 'auto-mode-alist '("\\.hrl?$" . erlang-mode))
 

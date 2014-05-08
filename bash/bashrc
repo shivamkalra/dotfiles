@@ -34,7 +34,7 @@ export PROMPT_COMMAND='printf "\033]0;%s\007" "${PWD/#$HOME/~}"'
 ################################################################
 # Aliases                                                      #
 ################################################################
-alias emacs="TERM=rxvt /bin/emacs -nw"
+alias e="TERM=rxvt /bin/emacs -nw"
 alias ls='ls -h --color=auto'
 alias h='cd'
 alias cim='vim'
