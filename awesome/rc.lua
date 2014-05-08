@@ -391,6 +391,8 @@ awful.rules.rules = {
      properties = { floating = true } },
    { rule = { class = "URxvt" },
      properties = { size_hints_honor = false } },
+   { rule = { class = "Emacs", instance = "emacs" },
+     properties = { size_hints_honor = false } },
    { rule = { class = "pinentry" },
      properties = { floating = true } },
    { rule = { class = "gimp" },
