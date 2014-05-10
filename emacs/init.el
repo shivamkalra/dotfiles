@@ -1,7 +1,8 @@
-(require 'package)
-(require 'whitespace)
+;; No splash screen please ... jeez
+(setq inhibit-startup-message t)
 
-(add-to-list 'package-archives 
+(require 'package)
+(add-to-list 'package-archives
     '("marmalade" .
       "http://marmalade-repo.org/packages/"))
 (package-initialize)
@@ -23,7 +24,7 @@ your recently and most frequently used commands.")
 
 ;; M-x convert space to hyphen
 (defadvice smex (around space-inserts-hyphen activate compile)
-        (let ((ido-cannot-complete-command 
+        (let ((ido-cannot-complete-command
                `(lambda ()
                   (interactive)
                   (if (string= " " (this-command-keys))
@@ -34,13 +35,13 @@ your recently and most frequently used commands.")
 ;; get rid of `find-file-read-only' and replace it with something
 ;; more useful.
 (global-set-key (kbd "C-x C-r") 'ido-recentf-open)
- 
+
 ;; enable recent files mode.
 (recentf-mode t)
- 
+
 ; 50 files ought to be enough.
 (setq recentf-max-saved-items 50)
- 
+
 (defun ido-recentf-open ()
   "Use `ido-completing-read' to \\[find-file] a recent file"
   (interactive)
@@ -62,12 +63,3 @@ your recently and most frequently used commands.")
  ;; If there is more than one, they won't work right.
  )
 (load-theme 'solarized-dark t)
-(menu-bar-mode -1)
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
-
-;; 80 column
-(setq whitespace-line-column 80) ;; limit line length
-(setq whitespace-style '(face lines-tail))
-
-(add-hook 'prog-mode-hook 'whitespace-mode)
