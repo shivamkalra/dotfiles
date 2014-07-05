@@ -51,7 +51,11 @@ GREEN="\e[32m"
 YELLOW="\e[33m"
 BLUE="\e[34m"
 
-export PS1="\[$RED\]>>\[$GREEN\]>>\[$BLUE\]>>\[$CLEAR\] "
+if [[ "$TERM" == "dumb" ]]; then
+    export PS1=">>> "
+else
+    export PS1="\[$RED\]>>\[$GREEN\]>>\[$BLUE\]>>\[$CLEAR\] "
+fi
 # Gtk themes
 export GTK2_RC_FILES="$HOME/.gtkrc-2.0"
 
