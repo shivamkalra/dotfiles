@@ -8,10 +8,21 @@
 (package-initialize)
 
 (add-to-list 'load-path "~/.emacs.d/")
+
 (require 'appearance)
 (add-to-list 'auto-mode-alist '("\\.erl?$" . erlang-mode))
 (add-to-list 'auto-mode-alist '("\\.hrl?$" . erlang-mode))
 
+;; auto complete
+(require 'auto-complete)
+(require 'auto-complete-config)
+(ac-config-default)
+
+;; yasnippets
+(require 'yasnippet)
+(yas-global-mode 1)
+
+;; ido mode - mini buffer expansion
 (ido-mode t)
 (ido-vertical-mode t)
 
