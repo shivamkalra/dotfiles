@@ -11,10 +11,12 @@
 
 (defun setup-console-appearance())
 
-
 ;; common to both consol and window
 (menu-bar-mode -1)
 (require 'whitespace)
+
+;; global line number mode
+(global-linum-mode 't)
 
 ;; Visual hint when line exceeds 80 columns
 (setq whitespace-line-column 80)

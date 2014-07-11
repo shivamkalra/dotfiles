@@ -2,9 +2,9 @@
 (setq inhibit-startup-message t)
 
 (require 'package)
-(add-to-list 'package-archives
-    '("marmalade" .
-      "http://marmalade-repo.org/packages/"))
+(add-to-list 
+ 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
+
 (package-initialize)
 
 (add-to-list 'load-path "~/.emacs.d/")
@@ -17,6 +17,22 @@
 (require 'auto-complete)
 (require 'auto-complete-config)
 (ac-config-default)
+(ac-linum-workaround) ;; geez
+
+;; java
+(add-to-list 'load-path "~/.emacs.d/ajc-java-complete/")
+(require 'ajc-java-complete-config)
+(add-hook 'java-mode-hook 'ajc-java-complete-mode)
+(add-hook 'find-file-hook 'ajc-4-jsp-find-file-hook)
+(setq ajc-tag-file-list (list (expand-file-name "~/.java_base.tag")))
+
+;; jedi mode
+(add-hook 'python-mode-hook 'jedi:ac-setup)
+(setq jedi:complete-on-dot t)
+
+;;js2-mode
+(add-hook 'js2-mode-hook 'ac-js2-mode)
+(add-to-list 'auto-mode-alist (cons (rx ".js" eos) 'js2-mode))
 
 ;; yasnippets
 (require 'yasnippet)
@@ -32,6 +48,7 @@
 your recently and most frequently used commands.")
 
 (global-set-key (kbd "M-x") 'smex)
+
 
 ;; M-x convert space to hyphen
 (defadvice smex (around space-inserts-hyphen activate compile)
@@ -74,3 +91,4 @@ your recently and most frequently used commands.")
  ;; If there is more than one, they won't work right.
  )
 (load-theme 'solarized-dark t)
+(put 'erase-buffer 'disabled nil)
