@@ -4,24 +4,62 @@ cowsay "Testing Cow"
 # Functions                                                    #
 ################################################################
 extract () {
-    if [ -f $1 ] ; then
-	case $1 in
-            *.tar.bz2)   tar xvjf $1    ;;
-            *.tar.gz)    tar xvzf $1    ;;
-            *.bz2)       bunzip2 $1     ;;
-            *.rar)       unrar x $1       ;;
-            *.gz)        gunzip $1      ;;
-            *.tar)       tar xvf $1     ;;
-            *.tbz2)      tar xvjf $1    ;;
-            *.tgz)       tar xvzf $1    ;;
-            *.zip)       unzip $1       ;;
-            *.Z)         uncompress $1  ;;
-            *.7z)        7z x $1        ;;
-            *)           echo "don't know how to extract '$1'..." ;;
-	esac
-    else
-	echo "'$1' is not a valid file!"
+    for var in $*; do
+	if [ -f $var ]; then
+	    filename=`basename $var`
+	    foldername="${filename%.*}"
+	    # folder in which file exists
+	    fileder=$(realpath $(dirname $var))
+	    if [ -d $foldername ]; then
+		echo "Error: $foldername already exists"
+		continue
+	    fi
+	    mkdir _tmp_ && mv $var _tmp_
+	    cd _tmp_
+
+	    case $filename in
+		*.tar.bz2)   tar xvjf $filename    ;;
+		*.tar.gz)    tar xvzf $filename    ;;
+		*.bz2)       bunzip2 $filename     ;;
+		*.rar)       unrar x $filename     ;;
+		*.gz)        gunzip $filename      ;;
+		*.tar)       tar xvf $filename     ;;
+		*.tbz2)      tar xvjf $filename    ;;
+		*.tgz)       tar xvzf $filename    ;;
+		*.zip)       unzip $filename       ;;
+		*.Z)         uncompress $filename  ;;
+		*.7z)        7z x $filename        ;;
+		*)           echo "don't know how to extract '$1'..." ;;
+	    esac
+	    
+	    # restoring
+	    mv $filename $fileder
+	    # three because we moved a file, . and extracted files
+	    if [ $(find . -maxdepth 1 | wc -l) -eq 2 ]; then 
+		mv  -i * ../ && cd ../ && rm -rf _tmp_
+	    else
+		cd ../ && mv _tmp_ $foldername
+	    fi
+	else
+	    echo "'$var' is not a valid file!"
+	fi
+
+    done
+}
+
+# zipping function
+zipit () {
+    if [ $# -eq 0 ]; then
+	return
     fi
+
+    zipname='output'
+    if [ $# -eq 1 ]; then
+	dir=$1
+	zipname=`basename $dir`
+	zipname="${zipname%.*}"
+    fi
+    zip -r $zipname.zip $@
 }
 
 ################################################################
@@ -32,6 +70,8 @@ export TERMINAL=urxvt
 export BROWSER=chromium
 export PS1=""
 export PROMPT_COMMAND='printf "\033]0;%s\007" "${PWD/#$HOME/~}"'
+# Skin for MC
+export MC_SKIN=$HOME/.mc/solarized.ini
 
 ################################################################
 # Aliases                                                      #
