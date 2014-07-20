@@ -4,7 +4,8 @@ cowsay "Testing Cow"
 # Functions                                                    #
 ################################################################
 extract () {
-    for var in $*; do
+    # iterate all the files that matches
+    for var in $@; do
 	if [ -f $var ]; then
 	    filename=`basename $var`
 	    foldername="${filename%.*}"
@@ -53,13 +54,17 @@ zipit () {
 	return
     fi
 
+    cmd=""
+    for var in $@; do
+	cmd="$cmd $var"
+    done
     zipname='output'
     if [ $# -eq 1 ]; then
 	dir=$1
 	zipname=`basename $dir`
 	zipname="${zipname%.*}"
     fi
-    zip -r $zipname.zip $@
+    zip -r $zipname.zip $cmd
 }
 
 ################################################################
