@@ -1,4 +1,5 @@
-cowsay "Testing Cow"
+# Print some cows
+cowsay "Testing Cow" 2> /dev/null
 
 ################################################################
 # Functions                                                    #
