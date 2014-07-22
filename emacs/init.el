@@ -17,7 +17,9 @@
 (require 'auto-complete)
 (require 'auto-complete-config)
 (ac-config-default)
-(ac-linum-workaround) ;; geez
+(if global-linum-mode 
+    (ac-linum-workaround))
+(ac-linum-workaround)
 
 ;; java
 (add-to-list 'load-path "~/.emacs.d/ajc-java-complete/")
