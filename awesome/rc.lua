@@ -494,4 +494,5 @@ function run_once(prg)
    sexec("pgrep -u $USER -x " .. prg .. " || (" .. prg .. ")")
 end
 run_once("clipit")
+run_once("nm-applet")
 -- }}}
