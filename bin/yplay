@@ -1,0 +1,9 @@
+# clear anything thats playing
+mpc clear > /dev/null
+
+# fetch url
+url=$(python $HOME/bin/_raw/yplay.py $@)
+
+# play
+mpc add $(youtube-dl --prefer-insecure -g -f140 $url) > /dev/null
+mpc play > /dev/null

@@ -29,3 +29,6 @@ if [ -f "${SSH_ENV}" ]; then
 else
     start_agent;
 fi
+
+#Adding path Variables
+PATH=$PATH:${HOME}/bin
