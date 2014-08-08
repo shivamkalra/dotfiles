@@ -5,7 +5,7 @@
   (scroll-bar-mode -1)
   ;; This is for any specific apprearance requirements in window mode
   (add-to-list 'default-frame-alist
-	       '(font . "DejaVu Sans Mono-9"))
+	       '(font . "Fantasque Sans Mono-10:weight=black"))
   ;; global line mode looks ugly in console
   (global-hl-line-mode 't)
   (global-linum-mode 't))
