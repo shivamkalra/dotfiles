@@ -16,4 +16,6 @@ xbindkeys &
 #/usr/bin/openbox-session > ~/.openbox_startup.log 2>&1
 
 /usr/bin/awesome
+# start the music player daemon
+/usr/bin/mpd
 /usr/bin/start-pulseaudio-x11
