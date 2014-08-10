@@ -13,12 +13,20 @@
 (add-to-list 'auto-mode-alist '("\\.erl?$" . erlang-mode))
 (add-to-list 'auto-mode-alist '("\\.hrl?$" . erlang-mode))
 
+;; yasnippets
+(require 'yasnippet)
+(yas-global-mode 1)
+
 ;; auto complete
 (require 'auto-complete)
 (require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 (ac-config-default)
-(if global-linum-mode 
-    (ac-linum-workaround))
+;;; set the trigger key so that it can work together with yasnippet on tab key,
+;;; if the word exists in yasnippet, pressing tab will cause yasnippet to
+;;; activate, otherwise, auto-complete will
+(ac-set-trigger-key "TAB")
+(ac-set-trigger-key "<tab>")
 (ac-linum-workaround)
 
 ;; java
@@ -35,10 +43,6 @@
 ;;js2-mode
 (add-hook 'js2-mode-hook 'ac-js2-mode)
 (add-to-list 'auto-mode-alist (cons (rx ".js" eos) 'js2-mode))
-
-;; yasnippets
-(require 'yasnippet)
-(yas-global-mode 1)
 
 ;; ido mode - mini buffer expansion
 (ido-mode t)
