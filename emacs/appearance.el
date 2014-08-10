@@ -8,9 +8,16 @@
 	       '(font . "Fantasque Sans Mono-10:weight=black"))
   ;; global line mode looks ugly in console
   (global-hl-line-mode 't)
-  (global-linum-mode 't))
+  (global-linum-mode 't)
+  ;; wind move default keybindings
+  (windmove-default-keybindings))
 
-(defun setup-console-appearance())
+(defun setup-console-appearance()
+  ;; wind move
+  (global-set-key (kbd "C-c <left>")  'windmove-left)
+  (global-set-key (kbd "C-c <right>") 'windmove-right)
+  (global-set-key (kbd "C-c <up>")    'windmove-up)
+  (global-set-key (kbd "C-c <down>")  'windmove-down))
 
 ;; common to both consol and window
 (menu-bar-mode -1)
@@ -24,8 +31,7 @@
 (add-hook 'prog-mode-hook 'whitespace-mode)
 
 (if window-system
-    (progn
-      (setup-window-appearance)
-      (setup-console-appearance)))
+    (setup-window-appearance)
+  (setup-console-appearance))
 
 (provide 'appearance)
