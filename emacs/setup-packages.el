@@ -30,6 +30,9 @@
 (use-package monokai-theme
   :ensure t)
 
+;;(use-package color-theme-sanityinc-solarized
+;;  :ensure t)
+
 (use-package ido-mode
   :defer t
   :init
@@ -273,7 +276,12 @@
   :mode ("\\.lua\\'" . lua-mode))
 
 (require 'ajc-java-complete-config)
-(use-package ajc-java-complete
+(use-package ajc-java-compl
+;; disable all menu(s)
+(progn
+  (dolist (mode '(menu-bar-mode tool-bar-mode scroll-bar-mode))
+    (when (fboundp mode) (funcall mode -1))))
+ete
   :init
   (progn
     (add-hook 'java-mode-hook 'ajc-java-complete-mode))
