@@ -48,6 +48,7 @@
 ;; visual hint after 80th column number
 (use-package whitespace
   :defer t
+  :diminish whitespace-mode
   :init
   (hook-into-modes 'whitespace-mode
 		   '(prog-mode-hook))
