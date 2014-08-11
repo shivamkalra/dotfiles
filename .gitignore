@@ -1,0 +1,6 @@
+emacs/**/*.elc
+emacs/auto-save-list
+emacs/elpa
+emacs/eshell
+emacs/**/*.eld
+emacs/**/*.dat
