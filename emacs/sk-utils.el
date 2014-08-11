@@ -10,4 +10,9 @@
   `(dolist (hook ,mode-hooks)
      (add-hook hook ,function)))
 
+(defun byte-compile-init-dir ()
+  "Byte-compile all your dotfiles."
+  (interactive)
+  (byte-recompile-directory user-emacs-directory 0))
+
 (provide 'sk-utils)
