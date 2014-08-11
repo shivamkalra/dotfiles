@@ -5,6 +5,8 @@
   "Expand FILENAME relative to `user-emacs-directory'."
   (expand-file-name filename user-emacs-directory))
 
+(add-to-list 'load-path (emacs-d "auto-java-complete"))
+
 ;;; External Packages
 (load (emacs-d "sk-utils"))
 (load (emacs-d "setup-packages"))
@@ -12,6 +14,9 @@
 ;; no splash screen - thank you
 (setq inhibit-startup-message t
       initial-buffer-choice t)
+
+;; load the theme
+(load-theme 'monokai t)
 
 ;; disable all menu(s)
 (progn
@@ -24,12 +29,6 @@
 ;; Visible bell..geez
 (setq visible-bell t)
 
-;; key bindings
-(global-set-key (kbd "C-c <left>")  'windmove-left)
-(global-set-key (kbd "C-c <right>") 'windmove-right)
-(global-set-key (kbd "C-c <up>")    'windmove-up)
-(global-set-key (kbd "C-c <down>")  'windmove-down)
-
 ;; settings for window and console
 (if window-system
     (progn
@@ -39,5 +38,9 @@
       (add-to-list 'default-frame-alist
 		   '(font . "Fantasque Sans Mono-10:weight=black"))))
   
-;; load the theme
-(load-theme 'monokai t)
+;; key bindings
+(global-set-key (kbd "C-c <left>")  'windmove-left)
+(global-set-key (kbd "C-c <right>") 'windmove-right)
+(global-set-key (kbd "C-c <up>")    'windmove-up)
+(global-set-key (kbd "C-c <down>")  'windmove-down)
+(global-set-key (kbd "C-x C-r") 'ido-recentf-open)

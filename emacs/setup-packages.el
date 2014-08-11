@@ -272,11 +272,11 @@
   :ensure t
   :mode ("\\.lua\\'" . lua-mode))
 
+(require 'ajc-java-complete-config)
 (use-package ajc-java-complete
-  :load-path "auto-java-complete/"  
   :init
   (progn
-    (add-hook 'java-mode-hook 'ajc-java-complete-mode)) 
+    (add-hook 'java-mode-hook 'ajc-java-complete-mode))
   :config
   (setq ajc-tag-file-list (list (expand-file-name "~/.java_base.tag"))))
 
