@@ -1,100 +1,43 @@
-;; No splash screen please ... jeez
-(setq inhibit-startup-message t)
+;;; init.el --- The Emacs Initialization File
+(setq message-log-max 16384)
 
-(require 'package)
-(add-to-list 
- 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(defun emacs-d (filename)
+  "Expand FILENAME relative to `user-emacs-directory'."
+  (expand-file-name filename user-emacs-directory))
 
-(package-initialize)
+;;; External Packages
+(load (emacs-d "sk-utils"))
+(load (emacs-d "setup-packages"))
 
-(add-to-list 'load-path "~/.emacs.d/")
+;; no splash screen - thank you
+(setq inhibit-startup-message t
+      initial-buffer-choice t)
 
-(require 'appearance)
-(add-to-list 'auto-mode-alist '("\\.erl?$" . erlang-mode))
-(add-to-list 'auto-mode-alist '("\\.hrl?$" . erlang-mode))
+;; disable all menu(s)
+(progn
+  (dolist (mode '(menu-bar-mode tool-bar-mode scroll-bar-mode))
+    (when (fboundp mode) (funcall mode -1))))
 
-;; yasnippets
-(require 'yasnippet)
-(yas-global-mode 1)
+;; enable column number by default
+(column-number-mode 1)
 
-;; auto complete
-(require 'auto-complete)
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
-(ac-config-default)
-;;; set the trigger key so that it can work together with yasnippet on tab key,
-;;; if the word exists in yasnippet, pressing tab will cause yasnippet to
-;;; activate, otherwise, auto-complete will
-(ac-set-trigger-key "TAB")
-(ac-set-trigger-key "<tab>")
-(ac-linum-workaround)
+;; Visible bell..geez
+(setq visible-bell t)
 
-;; java
-(add-to-list 'load-path "~/.emacs.d/ajc-java-complete/")
-(require 'ajc-java-complete-config)
-(add-hook 'java-mode-hook 'ajc-java-complete-mode)
-(add-hook 'find-file-hook 'ajc-4-jsp-find-file-hook)
-(setq ajc-tag-file-list (list (expand-file-name "~/.java_base.tag")))
+;; key bindings
+(global-set-key (kbd "C-c <left>")  'windmove-left)
+(global-set-key (kbd "C-c <right>") 'windmove-right)
+(global-set-key (kbd "C-c <up>")    'windmove-up)
+(global-set-key (kbd "C-c <down>")  'windmove-down)
 
-;; jedi mode
-(add-hook 'python-mode-hook 'jedi:ac-setup)
-(setq jedi:complete-on-dot t)
-
-;;js2-mode
-(add-hook 'js2-mode-hook 'ac-js2-mode)
-(add-to-list 'auto-mode-alist (cons (rx ".js" eos) 'js2-mode))
-
-;; ido mode - mini buffer expansion
-(ido-mode t)
-(ido-vertical-mode t)
-
-;;; Lazy loading of smex
-(autoload 'smex "smex"
-  "Smex is a M-x enhancement for Emacs, it provides a convenient interface to
-your recently and most frequently used commands.")
-
-(global-set-key (kbd "M-x") 'smex)
-
-
-;; M-x convert space to hyphen
-(defadvice smex (around space-inserts-hyphen activate compile)
-        (let ((ido-cannot-complete-command
-               `(lambda ()
-                  (interactive)
-                  (if (string= " " (this-command-keys))
-                      (insert ?-)
-                    (funcall ,ido-cannot-complete-command)))))
-          ad-do-it))
-
-;; get rid of `find-file-read-only' and replace it with something
-;; more useful.
-(global-set-key (kbd "C-x C-r") 'ido-recentf-open)
-
-;; enable recent files mode.
-(recentf-mode t)
-
-; 50 files ought to be enough.
-(setq recentf-max-saved-items 50)
-
-(defun ido-recentf-open ()
-  "Use `ido-completing-read' to \\[find-file] a recent file"
-  (interactive)
-  (if (find-file (ido-completing-read "Find recent file: " recentf-list))
-      (message "Opening file...")
-    (message "Aborting")))
-
-;; theming
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes (quote ("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" default))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess pit up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-(load-theme 'solarized-dark t)
-(put 'erase-buffer 'disabled nil)
+;; settings for window and console
+(if window-system
+    (progn
+      ;; add hook for linenum mode add aswell
+      (add-hook 'prog-mode-hook 'linum-mode t)
+      ;; set the *sick* fonts for gui
+      (add-to-list 'default-frame-alist
+		   '(font . "Fantasque Sans Mono-10:weight=black"))))
+  
+;; load the theme
+(load-theme 'monokai t)
