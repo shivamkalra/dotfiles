@@ -17,6 +17,7 @@
 
 ;; load the theme
 (load-theme 'monokai t)
+;;(load-theme 'sanityinc-solarized-dark t)
 
 ;; disable all menu(s)
 (progn
@@ -43,4 +44,5 @@
 (global-set-key (kbd "C-c <right>") 'windmove-right)
 (global-set-key (kbd "C-c <up>")    'windmove-up)
 (global-set-key (kbd "C-c <down>")  'windmove-down)
+(global-set-key (kbd "RET") 'newline-and-indent)
 (global-set-key (kbd "C-x C-r") 'ido-recentf-open)
