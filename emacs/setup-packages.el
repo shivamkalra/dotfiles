@@ -119,6 +119,7 @@
     (ido-ubiquitous-use-new-completing-read yas/visit-snippet-file 'yasnippet)))
 
 (use-package magit
+  :ensure t
   :commands magit-get-top-dir
   :bind (("C-c g" . magit-status)
          ("C-c C-g l" . magit-file-log)
@@ -200,8 +201,8 @@
 (use-package projectile
   :ensure t
   :diminish projectile-mode
-  :bind (("C-c f" . projectile-find-file)
-	 ("C-c g" . projectile-grep))
+  :bind (("C-c p f" . projectile-find-file)
+	 ("C-c p g" . projectile-grep))
   :config
   (projectile-global-mode))
 
