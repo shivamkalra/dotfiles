@@ -35,6 +35,7 @@
     (progn
       ;; add hook for linenum mode add aswell
       (add-hook 'prog-mode-hook 'linum-mode t)
+      (add-hook 'prog-mode-hook 'hl-line-mode t)
       ;; set the *sick* fonts for gui
       (add-to-list 'default-frame-alist
 		   '(font . "Fantasque Sans Mono-10:weight=black"))))
