@@ -244,6 +244,13 @@ globalkeys = awful.util.table.join(
             awful.client.movetotag(tags[client.focus.screen][curidx - 1])
          end
    end),
+   -- open emacs Mod + e
+   awful.key({ modkey, }, "e",
+      function (c) awful.util.spawn("emacs") end),
+   -- open chrome with Mod + c
+   awful.key({ modkey, }, "c",
+      function (c) awful.util.spawn("chromium") end),
+   
    awful.key({ modkey, "Shift"   }, "Right",
       function (c)
          local curidx = awful.tag.getidx()
