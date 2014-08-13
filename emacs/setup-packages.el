@@ -44,7 +44,7 @@
   :ensure t
   :defer t
   :config
-  (powerline-default-theme))
+  (powerline-center-theme))
 
 ;;(use-package color-theme-sanityinc-solarized
 ;;  :ensure t)
