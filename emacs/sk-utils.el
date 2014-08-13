@@ -15,6 +15,13 @@
   (interactive)
   (byte-recompile-directory user-emacs-directory 0))
 
+(defun replace-last-sexp ()
+  "Evaluate the last lisp expression and replace it with its result"
+    (interactive)
+    (let ((value (eval (preceding-sexp))))
+      (kill-sexp -1)
+      (insert (format "%S" value))))
+
 (defadvice hl-line-mode (after 
 			 advice-hl-line-mode 
 			 activate 
