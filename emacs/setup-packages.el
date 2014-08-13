@@ -34,9 +34,8 @@
     :ensure t))
 
 (use-package linum
-  :defer t
   :init
-  (global-linum-mode 1)
+  (add-hook 'prog-mode-hook 'linum-mode t)
   :config
   (if (not window-system)
       (setq linum-format "%d ")))
@@ -294,14 +293,8 @@
 
 (require 'ajc-java-complete-config)
 (use-package ajc-java-compl
-;; disable all menu(s)
-(progn
-  (dolist (mode '(menu-bar-mode tool-bar-mode scroll-bar-mode))
-    (when (fboundp mode) (funcall mode -1))))
-ete
   :init
-  (progn
-    (add-hook 'java-mode-hook 'ajc-java-complete-mode))
+  (add-hook 'java-mode-hook 'ajc-java-complete-mode)
   :config
   (setq ajc-tag-file-list (list (expand-file-name "~/.java_base.tag"))))
 
