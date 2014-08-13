@@ -26,9 +26,26 @@
 (require 'use-package)
 (setq use-package-minimum-reported-time 0)
 
-;; theme 
-(use-package monokai-theme
-  :ensure t)
+;; theme
+(if window-system
+    (use-package monokai-theme
+      :ensure t)
+  (use-package color-theme-sanityinc-solarized
+    :ensure t))
+
+(use-package linum
+  :defer t
+  :init
+  (global-linum-mode 1)
+  :config
+  (if (not window-system)
+      (setq linum-format "%d ")))
+
+(use-package powerline
+  :ensure t
+  :defer t
+  :config
+  (powerline-default-theme))
 
 ;;(use-package color-theme-sanityinc-solarized
 ;;  :ensure t)

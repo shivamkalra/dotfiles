@@ -15,8 +15,12 @@
 (setq inhibit-startup-message t
       initial-buffer-choice t)
 
+
 ;; load the theme
-(load-theme 'monokai t)
+(if window-system
+   (load-theme 'monokai t)
+   (load-theme 'sanityinc-solarized-dark t))
+
 ;;(load-theme 'sanityinc-solarized-dark t)
 
 ;; disable all menu(s)
@@ -31,14 +35,11 @@
 (setq visible-bell t)
 
 ;; settings for window and console
-(if window-system
-    (progn
-      ;; add hook for linenum mode add aswell
-      (add-hook 'prog-mode-hook 'linum-mode t)
-      (add-hook 'prog-mode-hook 'hl-line-mode t)
-      ;; set the *sick* fonts for gui
-      (add-to-list 'default-frame-alist
-		   '(font . "Fantasque Sans Mono-10:weight=black"))))
+;; add hook for linenum mode add aswell
+(add-hook 'prog-mode-hook 'hl-line-mode t)
+;; set the *sick* fonts for gui
+(add-to-list 'default-frame-alist
+	     '(font . "Fantasque Sans Mono-10:weight=black"))
   
 ;; key bindings
 (global-set-key (kbd "C-c <left>")  'windmove-left)
