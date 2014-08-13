@@ -220,11 +220,10 @@
 
 (use-package projectile
   :ensure t
-  :diminish projectile-mode
-  :bind (("C-c p f" . projectile-find-file)
-	 ("C-c p g" . projectile-grep))
-  :config
-  (projectile-global-mode))
+  :defer t
+  :init
+  (projectile-global-mode)
+  :diminish projectile-mode)
 
 (use-package smartparens
   :ensure t
