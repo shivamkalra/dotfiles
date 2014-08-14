@@ -40,14 +40,39 @@
   (if (not window-system)
       (setq linum-format "%d ")))
 
+(use-package helm-swoop
+  :ensure t
+  :bind 
+  (("M-i" . helm-swoop)
+   ("M-I" . helm-swoop-back-to-last-point)
+   ("C-c M-i" . helm-multi-swoop)
+   ("C-x M-i" . helm-multi-swoop-all))
+  :config
+  (progn
+    ;; When doing isearch, hand the word over to helm-swoop
+    (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
+    ;; From helm-swoop to helm-multi-swoop-all
+    (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
+    ;; Save buffer when helm-multi-swoop-edit complete
+    (setq helm-multi-swoop-edit-save t)
+    ;; If this value is t, split window inside the current window
+    (setq helm-swoop-split-with-multiple-windows nil)
+    ;; Split direcion. 'split-window-vertically or 'split-window-horizontally
+    (setq helm-swoop-split-direction 'split-window-vertically)
+    ;; If nil, you can slightly boost invoke speed in exchange for text color
+    (setq helm-swoop-speed-or-color nil)))
+
 (use-package powerline
   :ensure t
   :defer t
   :config
   (powerline-center-theme))
 
-;;(use-package color-theme-sanityinc-solarized
-;;  :ensure t)
+(use-package ace-jump-mode
+  :ensure t
+  :bind (("C-." . ace-jump-mode)
+	  ("C-," . ace-jump-word-mode)
+	  ("C-/" . ace-jump-line-mode)))
 
 (use-package ido-mode
   :defer t
@@ -130,8 +155,8 @@
 (use-package goto-chg
   :ensure t
   :defer t
-  :bind (("C-." . goto-last-change)
-         ("C-," . goto-last-change-reverse)))
+  :bind (("C-c <" . goto-last-change)
+         ("C-c >" . goto-last-change-reverse)))
 
 (use-package ido-ubiquitous
   :ensure t
