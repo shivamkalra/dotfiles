@@ -46,4 +46,21 @@
       (message "Opening file...")
     (message "Aborting")))
 
+(defun sk-youtube-search(keyword)
+  "This function calls yplay script to play the song from mini-buffer"
+  (interactive "sKeywords: ")
+  (save-window-excursion
+    (async-shell-command
+     (format "yplay %s" keyword))))
+
+(setq youtube-play "pause")
+(defun sk-youtube-play-pause()
+  "This function calls MPC to paly/pause the MPD"
+  (interactive)
+  (shell-command
+   (format "mpc %s" youtube-play))
+  (setq youtube-play
+	(if (string= "play" youtube-play) "pause" "play")))
+
 (provide 'sk-utils)
+
