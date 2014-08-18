@@ -18,7 +18,9 @@
 
 ;; load the theme
 (if window-system
-   (load-theme 'monokai t)
+   (progn
+     (load-theme 'monokai t)
+     (set-cursor-color "#FF8800"))
    (load-theme 'sanityinc-solarized-dark t))
 
 ;;(load-theme 'sanityinc-solarized-dark t)
@@ -34,9 +36,6 @@
 ;; Visible bell..geez
 (setq visible-bell t)
 
-;; settings for window and console
-;; add hook for linenum mode add aswell
-(add-hook 'prog-mode-hook 'hl-line-mode t)
 ;; set the *sick* fonts for gui
 (add-to-list 'default-frame-alist
 	     '(font . "Fantasque Sans Mono-10:weight=black"))

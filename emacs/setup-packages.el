@@ -92,11 +92,13 @@
     (global-set-key (kbd "C->") 'mc/mark-next-like-this)
     (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
     (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)))
- 
+
 (use-package paren
   :defer t
   :init
-  (add-hook 'prog-mode-hook 'show-paren-mode t))
+  (add-hook 'prog-mode-hook 'show-paren-mode t)
+  :config
+  (set-face-attribute 'show-paren-match nil :weight 'extra-bold))
 
 ;; visual hint after 80th column number
 (use-package whitespace
