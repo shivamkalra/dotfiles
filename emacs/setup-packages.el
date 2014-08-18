@@ -305,11 +305,10 @@
   :interpreter ("python" . python-mode)
   :config
   (progn
-    (use-package jedi
+    (use-package elpy
       :ensure t
       :config
-      (jedi:dot-complete))
-    (add-hook 'python-mode-hook 'jedi:ac-setup)))
+      (elpy-enable))))
 
 (use-package js2-mode
   :ensure t
