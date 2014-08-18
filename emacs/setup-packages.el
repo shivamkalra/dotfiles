@@ -287,7 +287,7 @@
   :config
   (progn
     (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
-    (ac-config-default)
+    (global-auto-complete-mode)
     (ac-set-trigger-key "TAB")
     (ac-set-trigger-key "<tab>")
     (ac-linum-workaround)))
