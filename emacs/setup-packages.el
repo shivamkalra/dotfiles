@@ -286,10 +286,11 @@
 (use-package auto-complete
   :ensure t
   :diminish auto-complete-mode
+  :init (add-hook 'prog-mode-hook 'auto-complete t)
   :config
   (progn
     (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
-    (global-auto-complete-mode)
+    (ac-config-default)
     (ac-set-trigger-key "TAB")
     (ac-set-trigger-key "<tab>")
     (ac-linum-workaround)))
@@ -309,7 +310,7 @@
   (progn
     (use-package elpy
       :ensure t
-      :config
+      :init
       (elpy-enable))))
 
 (use-package js2-mode
@@ -324,12 +325,5 @@
 (use-package lua-mode
   :ensure t
   :mode ("\\.lua\\'" . lua-mode))
-
-(require 'ajc-java-complete-config)
-(use-package ajc-java-compl
-  :init
-  (add-hook 'java-mode-hook 'ajc-java-complete-mode)
-  :config
-  (setq ajc-tag-file-list (list (expand-file-name "~/.java_base.tag"))))
 
 (provide 'setup-packages)

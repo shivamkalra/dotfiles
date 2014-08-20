@@ -11,10 +11,13 @@
 (load (emacs-d "sk-utils"))
 (load (emacs-d "setup-packages"))
 
+(require 'ajc-java-complete-config)
+(add-hook 'java-mode-hook 'ajc-java-complete-mode)
+(setq ajc-tag-file-list (list (expand-file-name "~/.java_base.tag")))
+
 ;; no splash screen - thank you
 (setq inhibit-startup-message t
       initial-buffer-choice t)
-
 
 ;; load the theme
 (if window-system
