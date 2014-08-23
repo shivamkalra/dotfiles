@@ -60,7 +60,11 @@ editor_cmd = terminal .. " -e " .. editor
 -- with others.
 modkey = "Mod4"
 
+
 -- Table of layouts to cover with awful.layout.inc, order matters.
+-- Types of laouts:
+-- colums rows magnified maximized spiral zig-zag floating
+
 local layouts =
    {
       awful.layout.suit.floating,
