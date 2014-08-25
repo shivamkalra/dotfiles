@@ -26,17 +26,19 @@ end
 -- Handle runtime errors after startup
 do
    local in_error = false
-   awesome.connect_signal("debug::error", function (err)
-			     -- Make sure we don't go into an endless error loop
-			     if in_error then return end
-			     in_error = true
+   awesome.connect_signal(
+      "debug::error",
+      function (err)
+	 -- Make sure we don't go into an endless error loop
+	 if in_error then return end
+	 in_error = true
 
-			     naughty.notify({ preset = naughty.config.presets.
-						 critical,
-					      title = "Oops, an error"..
-						 "happened!",
-					      text = err })
-			     in_error = false
+	 naughty.notify({ preset = naughty.config.presets.
+			     critical,
+			  title = "Oops, an error"..
+			     "happened!",
+			  text = err })
+	 in_error = false
    end)
 end
 -- }}}
@@ -466,9 +468,12 @@ awful.rules.rules = {
 -- Signal function to execute when a new client appears.
 
 battery_widget_timer = timer({timeout = 1})
-battery_widget_timer:connect_signal("timeout", function()
-				       battery_widget:set_text(battery_info("BAT0"))
+battery_widget_timer:connect_signal(
+   "timeout",
+   function()
+      battery_widget:set_text(battery_info("BAT0"))
 end)
+
 battery_widget_timer:start()
 battery_widget:set_text(battery_info("BAT0"))
 volume_widget:set_text(volume_info())
@@ -527,16 +532,11 @@ client.connect_signal(
 
 	 -- Widgets that are aligned to the right
 	 local right_layout = wibox.layout.fixed.horizontal()
-	 right_layout:add(awful.titlebar.widget.
-			     floatingbutton(c))
-	 right_layout:add(awful.titlebar.widget.
-			     maximizedbutton(c))
-	 right_layout:add(awful.titlebar.widget.
-			     stickybutton(c))
-	 right_layout:add(awful.titlebar.widget.
-			     ontopbutton(c))
-	 right_layout:add(awful.titlebar.widget.
-			     closebutton(c))
+	 right_layout:add(awful.titlebar.widget.floatingbutton(c))
+	 right_layout:add(awful.titlebar.widget.maximizedbutton(c))
+	 right_layout:add(awful.titlebar.widget.stickybutton(c))
+	 right_layout:add(awful.titlebar.widget.ontopbutton(c))
+	 right_layout:add(awful.titlebar.widget.closebutton(c))
 
 	 -- The title goes in the middle
 	 local middle_layout = wibox.layout.flex.horizontal()
