@@ -5,6 +5,8 @@
   "Expand FILENAME relative to `user-emacs-directory'."
   (expand-file-name filename user-emacs-directory))
 
+;; Override the packages with the git version of package
+(add-to-list 'load-path (emacs-d "use-package"))
 (add-to-list 'load-path (emacs-d "auto-java-complete"))
 
 ;;; External Packages

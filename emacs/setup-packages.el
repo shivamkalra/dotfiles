@@ -12,17 +12,7 @@
 (setq package-enable-at-startup nil)
 (package-initialize)
 
-;; If never connected to repositories before, download package descriptions so
-;; `use-package' can trigger installation of missing packages.
-(unless package-archive-contents
-  (message "Refreshing ELPA package archives...")
-  (package-refresh-contents))
-
-;; but before everything, make sure `use-package' is installed.
-(unless (package-installed-p 'use-package)
-  (message "`use-package' not found.  Installing...")
-  (package-install 'use-package))
-
+;; `use-package' is added as a sub-module
 (require 'use-package)
 (setq use-package-minimum-reported-time 0)
 
