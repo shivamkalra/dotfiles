@@ -42,7 +42,8 @@
     ;; When doing isearch, hand the word over to helm-swoop
     (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
     ;; From helm-swoop to helm-multi-swoop-all
-    (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
+    (define-key helm-swoop-map (kbd "M-i")
+      'helm-multi-swoop-all-from-helm-swoop)
     ;; Save buffer when helm-multi-swoop-edit complete
     (setq helm-multi-swoop-edit-save t)
     ;; If this value is t, split window inside the current window
@@ -88,7 +89,11 @@
   :init
   (add-hook 'prog-mode-hook 'show-paren-mode t)
   :config
-  (set-face-attribute 'show-paren-match nil :weight 'extra-bold))
+  (set-face-attribute 'show-paren-match nil
+		      :foreground "#E6DB74"
+		      :background "#23241e")
+  
+  (setq show-paren-style 'parenthesis))
 
 ;; visual hint after 80th column number
 (use-package whitespace
