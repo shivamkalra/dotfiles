@@ -56,6 +56,8 @@
 (global-set-key (kbd "C-c <down>")  'windmove-down)
 (global-set-key (kbd "RET") 'newline-and-indent)
 (global-set-key (kbd "C-x C-r") 'ido-recentf-open)
+(global-set-key (kbd "C-M-_") 'undo-tree-visualize)
+(global-set-key (kbd "C-M-+") 'undo-tree-visualizer-quit)
 
 (global-set-key (kbd "C-c y s") 'sk-youtube-search)
 (global-set-key (kbd "C-c y p") 'sk-youtube-play-pause)

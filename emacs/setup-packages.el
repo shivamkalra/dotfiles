@@ -294,6 +294,10 @@
   :ensure t
   :init (global-anzu-mode t))
 
+(use-package undo-tree
+  :ensure t
+  :init (global-undo-tree-mode t))
+
 (use-package recentf
   :init
   (recentf-mode t)
