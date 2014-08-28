@@ -23,10 +23,14 @@
 
 ;; load the theme
 (if window-system
-   (progn
-     (load-theme 'monokai t)
-     (set-cursor-color "#FF8800"))
-   (load-theme 'sanityinc-solarized-dark t))
+    (progn
+      (load-theme 'monokai t)
+      (set-cursor-color "#FF8800")
+      (add-hook 'prog-mode-hook
+		(lambda () (progn
+			     (hl-line-mode t)
+			     (set-face-background 'hl-line "#23241e")))))
+  (load-theme 'sanityinc-solarized-dark t))
 
 ;;(load-theme 'sanityinc-solarized-dark t)
 
