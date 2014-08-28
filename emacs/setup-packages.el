@@ -290,6 +290,10 @@
     (ac-set-trigger-key "<tab>")
     (ac-linum-workaround)))
 
+(use-package anzu
+  :ensure t
+  :init (global-anzu-mode t))
+
 (use-package recentf
   :init
   (recentf-mode t)
