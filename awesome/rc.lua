@@ -248,11 +248,11 @@ root.buttons(
 globalkeys = awful.util.table.join(
    awful.key({ }, "XF86AudioRaiseVolume",
       function ()
-	 awful.util.spawn("amixer set Master 9%+", false)
+	 awful.util.spawn("amixer set Master 1%+", false)
 	 volume_widget:set_text(volume_info())
    end),
    awful.key({ }, "XF86AudioLowerVolume", function ()
-	 awful.util.spawn("amixer set Master 9%-", false)
+	 awful.util.spawn("amixer set Master 1%-", false)
 	 volume_widget:set_text(volume_info())
    end),
    awful.key({ }, "XF86AudioMute", function ()
