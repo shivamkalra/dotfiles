@@ -48,5 +48,6 @@ else
     start_agent;
 fi
 
+RUBY_VERSION="2.1.0"
 #Adding path Variables
-PATH=$PATH:${HOME}/bin
+PATH=$PATH:${HOME}/bin:${HOME}/.gem/ruby/$RUBY_VERSION/bin
