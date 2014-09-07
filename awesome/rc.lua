@@ -259,6 +259,12 @@ globalkeys = awful.util.table.join(
 	 awful.util.spawn("amixer set Master toggle", false)
 	 volume_widget:set_text(volume_info())
    end),
+   awful.key({ modkey }, "Home", function()
+	 awful.util.spawn("xbacklight -inc 5", false)
+   end),
+   awful.key({ modkey }, "End", function()
+	 awful.util.spawn("xbacklight -dec 5", false)
+   end),
    awful.key({ modkey, }, "Left", awful.tag.viewprev ),
    awful.key({ modkey, }, "Right", awful.tag.viewnext ),
    awful.key({ modkey, }, "Escape", awful.tag.history.restore),
