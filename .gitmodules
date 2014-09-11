@@ -7,6 +7,3 @@
 [submodule "xorg/dircolors-solarized"]
 	path = xorg/dircolors-solarized
 	url = https://github.com/seebi/dircolors-solarized.git
-[submodule "emacs/use-package"]
-	path = emacs/use-package
-	url = https://github.com/jwiegley/use-package.git
