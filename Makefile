@@ -1,3 +1,6 @@
+minimal: install-emacs install-bash install-git \
+         install-xorg
+
 install: install-emacs install-bash install-git \
          install-xorg install-mpd \
          install-ncmpcpp install-tmux \
