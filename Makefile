@@ -1,3 +1,6 @@
+minimal: install-emacs install-bash install-git \
+         install-xorg
+
 install: install-emacs install-bash install-git \
          install-xorg install-mpd \
          install-ncmpcpp install-tmux \
@@ -17,7 +20,7 @@ install-git:
 	ln -s `pwd`/git/git-completion.bash ~/.git-completion.bash
 
 install-xorg:
-	mv -f ~/.xinitrc ~/.xinitrc.bak
+	mv -f ~/.xinitrc ~/.xinitrc.bak 2> /dev/null; true
 	rm -f ~/.Xdefaults ~/.lscolors
 	ln -s `pwd`/xorg/xinitrc ~/.xinitrc
 	ln -s `pwd`/xorg/Xdefaults ~/.Xdefaults
