@@ -44,8 +44,7 @@
       (add-hook 'prog-mode-hook
 		(lambda () (progn
 			     (hl-line-mode t)
-			     (set-face-background 'hl-line "#23241e")))))
-  (load-theme 'sanityinc-solarized-dark t))
+			     (set-face-background 'hl-line "#23241e"))))))
 
 ;;(load-theme 'sanityinc-solarized-dark t)
 
