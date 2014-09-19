@@ -94,6 +94,11 @@ alias gvim='gvim -geom 84x26'
 alias start='dbus-launch startx'
 alias c="clear"
 
+#git
+alias git-root='cd "$(git rev-parse --show-toplevel)"'
+# office
+alias klick-pradaxa="ssh skalra@pradaxastaging.klick.com"
+
 # TODO: Find better fix
 # this is alias defined only for TMUX shells
 # Tried adding the shortcut to tmux conf,

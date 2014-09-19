@@ -88,7 +88,7 @@ end
 tags = {
    names = { "www", "emacs", "shell", "work", "im", 6, 7, 8, 9 },
    layout = {
-      layouts[2], layouts[2], layouts[3], layouts[2], layouts[1],
+      layouts[2], layouts[2], layouts[3], layouts[2], layouts[2],
       layouts[2], layouts[2], layouts[1], layouts[1]
    }
 }
