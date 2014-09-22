@@ -93,6 +93,7 @@ alias dfh='df -h'
 alias gvim='gvim -geom 84x26'
 alias start='dbus-launch startx'
 alias c="clear"
+alias rm="rm -i"
 
 #git
 alias git-root='cd "$(git rev-parse --show-toplevel)"'
