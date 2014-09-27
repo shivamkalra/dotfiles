@@ -38,7 +38,6 @@
 (progn
   (dolist (mode '(menu-bar-mode tool-bar-mode scroll-bar-mode))
     (when (fboundp mode) (funcall mode -1))))
-
 ;; set the *sick* fonts for gui
 (add-to-list 'default-frame-alist
 	     '(font . "Fantasque Sans Mono-10:weight=black"))
@@ -53,6 +52,9 @@
 	(setq solarized-use-variable-pitch nil)
 	(load-theme 'solarized-dark t)))
   (load-theme 'wombat t))
+
+;; windmove
+(windmove-default-keybindings)
 
 ;; line/column numbers in mode-line
 (line-number-mode)
