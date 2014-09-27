@@ -1,92 +1,423 @@
-;;; init.el --- The Emacs Initialization File
-(setq message-log-max 16384)
+;;; init --- Andrew Schwartzmeyer's Emacs init file
 
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-language-environment "UTF-8")
-(prefer-coding-system 'utf-8)
+;;; Commentary:
+;;; Fully customized Emacs configurations
+(require 'cask "~/.cask/cask.el")
+(cask-initialize)
 
-(setq gc-cons-threshold 20000000)
+(require 'use-package)
+;;; some functions
+(defun ido-recentf-open ()
+  "Use `ido-completing-read' to \\[find-file] a recent file"
+  (interactive)
+  (if (find-file (ido-completing-read "Find recent file: " recentf-list))
+      (message "Opening file...")
+    (message "Aborting")))
 
-(defalias 'yes-or-no-p 'y-or-n-p)
+;;; shortcuts
 
-;; Allow font-lock-mode to do background parsing
-(setq jit-lock-stealth-time 1
-      jit-lock-stealth-load 100
-      jit-lock-chunk-size 1000
-      jit-lock-defer-time 0.01)
+;; miscellaneous
+(bind-key "C-c a" 'org-agenda)
+(bind-key "C-c <tab>" 'company-complete)
+(bind-key "C-x C-r" 'ido-recentf-open)
 
-(defun emacs-d (filename)
-  "Expand FILENAME relative to `user-emacs-directory'."
-  (expand-file-name filename user-emacs-directory))
+;; isearch
+(bind-key "C-s" 'isearch-forward-regexp)
+(bind-key "C-r" 'isearch-backward-regexp)
+(bind-key "C-M-s" 'isearch-forward)
+(bind-key "C-M-r" 'isearch-backward)
 
-;; Override the packages with the git version of package
-(add-to-list 'load-path (emacs-d "use-package"))
-(add-to-list 'load-path (emacs-d "auto-java-complete"))
+;; projectile command map
+(bind-key* "M-[" 'projectile-command-map)
 
-;;; External Packages
-(load (emacs-d "sk-utils"))
-(load (emacs-d "setup-packages"))
-
-(require 'ajc-java-complete-config)
-(add-hook 'java-mode-hook 'ajc-java-complete-mode)
-(setq ajc-tag-file-list (list (expand-file-name "~/.java_base.tag")))
-
+;;; appearance
 ;; no splash screen - thank you
 (setq inhibit-startup-message t
       initial-buffer-choice t)
-
-;; load the theme
-(if window-system
-    (progn
-      (load-theme 'monokai t)
-      (set-cursor-color "#FF8800")
-      (add-hook 'prog-mode-hook
-		(lambda () (progn
-			     (hl-line-mode t)
-			     (set-face-background 'hl-line "#23241e"))))))
-
-;;(load-theme 'sanityinc-solarized-dark t)
-
 ;; disable all menu(s)
 (progn
   (dolist (mode '(menu-bar-mode tool-bar-mode scroll-bar-mode))
     (when (fboundp mode) (funcall mode -1))))
 
-;; enable column number by default
-(column-number-mode 1)
-
-;; Visible bell..geez
-(setq visible-bell t)
-
-;; disable the case matching for file name
-(setq read-file-name-completion-ignore-case t)
-
 ;; set the *sick* fonts for gui
 (add-to-list 'default-frame-alist
 	     '(font . "Fantasque Sans Mono-10:weight=black"))
-  
-;; key bindings
-(global-set-key (kbd "C-c <left>")  'windmove-left)
-(global-set-key (kbd "C-c <right>") 'windmove-right)
-(global-set-key (kbd "C-c <up>")    'windmove-up)
-(global-set-key (kbd "C-c <down>")  'windmove-down)
-(global-set-key (kbd "RET") 'newline-and-indent)
-(global-set-key (kbd "C-x C-r") 'ido-recentf-open)
-(global-set-key (kbd "C-M-_") 'undo-tree-visualize)
-(global-set-key (kbd "C-M-+") 'undo-tree-visualizer-quit)
 
-(global-set-key (kbd "C-c y s") 'sk-youtube-search)
-(global-set-key (kbd "C-c y p") 'sk-youtube-play-pause)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(doc-view-continuous t))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(add-hook 'prog-mode-hook 'linum-mode t)
+(add-hook 'prog-mode-hook 'hl-line-mode t)
+;; theme (wombat in terminal, solarized otherwise)
+(if (display-graphic-p)
+    (use-package solarized
+      :config
+      (progn
+	(setq solarized-use-variable-pitch nil)
+	(load-theme 'solarized-dark t)))
+  (load-theme 'wombat t))
+
+;; line/column numbers in mode-line
+(line-number-mode)
+(column-number-mode)
+
+;; y/n for yes/no
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+;; quit prompt
+(setq confirm-kill-emacs 'yes-or-no-p)
+
+;; start week on Monday
+(setq calendar-week-start-day 1)
+
+;; cursor settings
+(blink-cursor-mode)
+
+;; visually wrap lines
+(setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
+
+;; default truncate lines
+(setq-default truncate-lines t)
+
+;; matching parentheses
+(show-paren-mode)
+
+;; window undo/redo
+(winner-mode)
+
+;; show function in modeline
+(which-function-mode)
+
+;;; settings
+
+;; enable all commands
+(setq disabled-command-function nil)
+
+;; kill whole line (including newline)
+(setq kill-whole-line t)
+
+;; initial text mode
+(setq initial-major-mode 'text-mode)
+
+;; visual line mode for text
+(add-hook 'text-mode-hook 'turn-on-visual-line-mode)
+
+;; longer commit summaries
+(setq git-commit-summary-max-length 72)
+
+;; disable bell
+(setq ring-bell-function 'ignore)
+
+;; subword navigation
+(subword-mode)
+
+;; increase garbage collection threshold
+(setq gc-cons-threshold 20000000)
+
+;; inhibit startup message
+(setq inhibit-startup-message t)
+
+;; remove selected region if typing
+(pending-delete-mode t)
+
+;; prefer UTF8
+(setq locale-coding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+
+;; set terminfo
+(setq system-uses-terminfo nil)
+
+;; open empty files quietly
+(setq confirm-nonexistent-file-or-buffer nil)
+
+;; fix tramp
+(eval-after-load 'tramp
+  '(progn (setenv "TMPDIR" "/tmp")
+	  (setenv "SHELL" "/bin/sh")))
+(setq tramp-auto-save-directory "/tmp")
+
+;;; files
+
+;; backups
+(setq backup-by-copying t
+      delete-old-versions t
+      kept-new-versions 4
+      kept-old-versions 2
+      version-control t
+      vc-make-backup-files t
+      backup-directory-alist `(("." . ,(concat
+					user-emacs-directory "backups"))))
+
+;; final-newline
+(setq require-final-newline 't)
+
+;; set auto revert of buffers if file is changed externally
+(global-auto-revert-mode)
+
+;; symlink version-control follow
+(setq vc-follow-symlinks t)
+
+;; add more modes
+(add-to-list 'auto-mode-alist '("\\.ino\\'" . c-mode))
+(add-to-list 'auto-mode-alist '("\\.vcsh\\'" . conf-mode))
+(add-to-list 'auto-mode-alist '("\\.zsh\\'" . shell-script-mode))
+(add-to-list 'magic-mode-alist '(";;; " . emacs-lisp-mode))
+
+;; dired
+(setq
+ ; enable side-by-side dired buffer targets
+ dired-dwim-target t
+ ; better recursion in dired
+ dired-recursive-copies 'always
+ dired-recursive-deletes 'top)
+
+;;; functions
+
+;; load local file
+(defun load-local (file)
+  "Load FILE from ~/.emacs.d, okay if missing."
+  (load (f-expand file user-emacs-directory) t))
+
+;; select whole line
+(defun select-whole-line ()
+  "Select whole line which has the cursor."
+  (interactive)
+  (end-of-line)
+  (set-mark (line-beginning-position)))
+(bind-key "C-c w" 'select-whole-line)
+
+;; comment/uncomment line/region
+(defun comment-or-uncomment-region-or-line ()
+  "Comments or uncomments the region or the current line if there's no active region."
+  (interactive)
+  (let (beg end)
+    (if (region-active-p)
+	(setq beg (region-beginning) end (region-end))
+      (setq beg (line-beginning-position) end (line-end-position)))
+    (comment-or-uncomment-region beg end)))
+(bind-key "C-c c" 'comment-or-uncomment-region-or-line)
+
+;;; load files
+
+;; load local settings
+(mapc 'load-local '("local" "feeds"))
+
+;; load OS X configurations
+(when (eq system-type 'darwin)
+  (load-local "osx"))
+
+;;; packages
+(use-package recentf
+  :init
+  (recentf-mode t)
+  :config
+  (setq recentf-max-saved-items 50))
+
+;; ace-jump-mode
+(use-package ace-jump-mode
+  :config (eval-after-load "ace-jump-mode" '(ace-jump-mode-enable-mark-sync))
+  :bind (("C-." . ace-jump-mode)
+   	 ("C-," . ace-jump-mode-pop-mark)))
+
+;; anzu
+(use-package anzu
+  :config (global-anzu-mode))
+
+;; browse-kill-ring
+(use-package browse-kill-ring
+  :config (browse-kill-ring-default-keybindings)
+  :bind ("C-c k" . browse-kill-ring))
+
+;; company "complete anything"
+(use-package company
+  :config
+  (progn
+    (setq company-minimum-prefix-length 2
+	  company-idle-delay 0.1)
+    (global-company-mode)))
+
+;; ein
+(use-package ein
+  :config (setq ein:use-auto-complete t))
+
+;; elfeed
+(use-package elfeed
+  :config (progn (add-hook 'elfeed-new-entry-hook
+			   (elfeed-make-tagger :before "2 weeks ago"
+					       :remove 'unread)))
+  :bind ("C-x w" . elfeed))
+
+;; activate expand-region
+(use-package expand-region
+  :bind ("C-=" . er/expand-region))
+
+;; flx-ido
+(use-package flx-ido
+  :config
+  (progn
+    (flx-ido-mode)
+    (setq ido-enable-flex-matching t
+	  ido-use-faces nil)))
+
+;; flycheck
+(use-package flycheck
+  :config
+  (progn
+    (add-hook 'after-init-hook #'global-flycheck-mode)
+    (setq flycheck-completion-system 'ido)))
+
+;; flyspell
+(use-package flyspell
+  :config (setq ispell-program-name "aspell" ; use aspell instead of ispell
+		ispell-extra-args '("--sug-mode=ultra")))
+
+;; ibuffer
+(use-package ibuffer
+  :config (add-hook 'ibuffer-mode-hook (lambda () (setq truncate-lines t)))
+  :bind ("C-x C-b" . ibuffer))
+
+;; ido setup
+(use-package ido
+  :config (ido-mode))
+(use-package ido-ubiquitous)
+
+;; ido-vertical
+(use-package ido-vertical-mode
+  :config (ido-vertical-mode))
+
+;; ledger
+(use-package ledger-mode
+  :config (add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode)))
+
+;; multiple-cursors
+(use-package multiple-cursors
+  :bind (("C-S-c C-S-c" . mc/edit-lines)
+	 ("C->" . mc/mark-next-like-this)
+	 ("C-<" . mc/mark-previous-like-this)
+	 ("C-c C-<" . mc/mark-all-like-this)))
+
+;; multi-term
+(use-package multi-term
+  :config (setq multi-term-program "bash"))
+
+;; org-auto-fill
+(add-hook 'org-mode-hook 'turn-on-auto-fill)
+
+;; org settings
+(setq org-pretty-entities t
+      org-entities-user '(("join" "\\Join" nil "&#9285;" "" "" "⋈")
+			  ("reals" "\\mathbb{R}" t "&#8477;" "" "" "ℝ")
+			  ("ints" "\\mathbb{Z}" t "&#8484;" "" "" "ℤ")
+			  ("complex" "\\mathbb{C}" t "&#2102;" "" "" "ℂ")
+			  ("models" "\\models" nil "&#8872;" "" "" "⊧"))
+      org-export-backends '(html beamer ascii latex md))
+
+;; org-babel
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (gnuplot . t)
+   (C . t)
+   (emacs-lisp . t)
+   (haskell . t)
+   (latex . t)
+   (ledger . t)
+   (python . t)
+   (ruby . t)
+   (sh . t)))
+
+;; popwin
+(use-package popwin
+  :config
+  (progn
+    (popwin-mode)
+    ;; cannot use :bind for keymap
+    (global-set-key (kbd "C-z") popwin:keymap)))
+
+;; projectile
+(use-package projectile
+  :config (projectile-global-mode))
+
+;; save kill ring
+(use-package savekill)
+
+;; saveplace
+(use-package saveplace
+  :config
+  (setq-default save-place t
+		save-place-file (f-expand "saved-places" user-emacs-directory )))
+;; scratch
+(use-package scratch
+  :bind ("C-c s" . scratch))
+
+;; slime
+(use-package sly-autoloads
+  :config (setq
+	   inferior-lisp-program (executable-find "sbcl")))
+
+;; activate smartparens
+(use-package smartparens
+  :config
+  (progn (use-package smartparens-config)
+	 (smartparens-global-mode)
+	 (show-smartparens-global-mode)))
+
+;; smart tabs
+(use-package smart-tabs-mode
+  :config (smart-tabs-insinuate 'c 'c++ 'python 'ruby))
+
+;; setup smex bindings
+(use-package smex
+  :config
+  (progn
+    (setq smex-save-file (f-expand "smex-items" user-emacs-directory))
+    (smex-initialize))
+  :bind (("M-x" . smex)
+	 ("M-X" . smex-major-mode-commands)
+	 ("C-c C-c M-x" . execute-extended-command)))
+
+;; scrolling
+(use-package smooth-scroll
+  :config
+  (progn
+    (smooth-scroll-mode)
+    (setq smooth-scroll/vscroll-step-size 8)))
+
+;; undo-tree
+(use-package undo-tree
+  :config
+  (progn
+    (global-undo-tree-mode)
+    (add-to-list 'undo-tree-history-directory-alist
+		 `("." . ,(f-expand "undo-tree" user-emacs-directory)))
+    (setq undo-tree-auto-save-history t)))
+
+;; uniquify
+(use-package uniquify
+  :config (setq uniquify-buffer-name-style 'forward))
+
+;; setup virtualenvwrapper
+(use-package virtualenvwrapper
+  :config (setq venv-location "~/.virtualenvs/"))
+
+;; whitespace
+(use-package whitespace
+  :config
+  (progn
+    (add-hook 'before-save-hook 'whitespace-cleanup)
+    (setq whitespace-line-column 80 ;; limit line length
+	  whitespace-style '(face tabs empty trailing lines-tail))))
+
+;; yasnippet
+(use-package yasnippet
+  :config
+  (progn
+    (yas-global-mode)
+    (unbind-key "<tab>" yas-minor-mode-map)
+    (unbind-key "TAB" yas-minor-mode-map)
+    (bind-key "C-c y" 'yas-expand yas-minor-mode-map)))
+
+;;; provide init package
+(provide 'init)
+
+;;; init.el ends here
