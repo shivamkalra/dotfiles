@@ -23,10 +23,6 @@
 	(let ((n (position selected names :test 'equal)))
 	  (nth n choices))
       (signal 'quit "user quit!"))))
-(defun byte-compile-initialize
-  "Byte compile the initializing directory for emac"
-  (interactive)
-  (byte-recompile-directory (expand-file-name "~/.emacs.d")))
 
 (defun ido-recentf-open ()
   "Use `ido-completing-read' to \\[find-file] a recent file"
