@@ -6,7 +6,28 @@
 (cask-initialize)
 
 (require 'use-package)
-;;; some functions
+
+;;; custom functions
+(defun my-yas/prompt (prompt choices &optional display-fn)
+  (let* ((names (loop for choice in choices
+		      collect (or (and display-fn
+				       (funcall display-fn choice))
+				  coice)))
+	 (selected (helm-other-buffer
+		    `(((name . ,(format "%s" prompt))
+		       (candidates . names)
+		       (action . (("Insert snippet" . (lambda (arg)
+							arg))))))
+		    "*helm yas/prompt*")))
+    (if selected
+	(let ((n (position selected names :test 'equal)))
+	  (nth n choices))
+      (signal 'quit "user quit!"))))
+(defun byte-compile-initialize
+  "Byte compile the initializing directory for emac"
+  (interactive)
+  (byte-recompile-directory (expand-file-name "~/.emacs.d")))
+
 (defun ido-recentf-open ()
   "Use `ido-completing-read' to \\[find-file] a recent file"
   (interactive)
@@ -15,12 +36,10 @@
     (message "Aborting")))
 
 ;;; shortcuts
-
 ;; miscellaneous
 (bind-key "C-c a" 'org-agenda)
 (bind-key "C-c <tab>" 'company-complete)
 (bind-key "C-x C-r" 'ido-recentf-open)
-
 ;; isearch
 (bind-key "C-s" 'isearch-forward-regexp)
 (bind-key "C-r" 'isearch-backward-regexp)
@@ -223,6 +242,7 @@
 
 ;; anzu
 (use-package anzu
+  :diminish anzu-mode
   :config (global-anzu-mode))
 
 ;; browse-kill-ring
@@ -338,6 +358,7 @@
 
 ;; projectile
 (use-package projectile
+  :diminish projectile-mode
   :config (projectile-global-mode))
 
 ;; save kill ring
@@ -381,6 +402,7 @@
 ;; scrolling
 (use-package smooth-scroll
   :config
+  :diminish smooth-scroll-mode
   (progn
     (smooth-scroll-mode)
     (setq smooth-scroll/vscroll-step-size 8)))
@@ -388,6 +410,7 @@
 ;; undo-tree
 (use-package undo-tree
   :config
+  :diminish undo-tree-mode
   (progn
     (global-undo-tree-mode)
     (add-to-list 'undo-tree-history-directory-alist
@@ -409,15 +432,16 @@
     (add-hook 'before-save-hook 'whitespace-cleanup)
     (setq whitespace-line-column 80 ;; limit line length
 	  whitespace-style '(face tabs empty trailing lines-tail))))
-
-;; yasnippet
+;; yasn\ippet
 (use-package yasnippet
   :config
   (progn
     (yas-global-mode)
     (unbind-key "<tab>" yas-minor-mode-map)
     (unbind-key "TAB" yas-minor-mode-map)
-    (bind-key "C-c y" 'yas-expand yas-minor-mode-map)))
+    (bind-key "C-c y" 'yas-expand yas-minor-mode-map)
+    (custom-set-variables '(yas/prompt-functions '(my-yas/prompt))))
+  :idle (yas-reload-all))
 
 ;;; provide init package
 (provide 'init)

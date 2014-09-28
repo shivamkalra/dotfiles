@@ -4,6 +4,8 @@
 (source org)
 
 (depends-on "use-package")
+(depends-on "helm")
+(depends-on "helm-swoop")
 (depends-on "ace-jump-mode")
 (depends-on "ag")
 (depends-on "anzu")
@@ -44,6 +46,5 @@
 (depends-on "solarized-theme")
 (depends-on "sly")
 (depends-on "undo-tree")
-(depends-on "use-package")
 (depends-on "yaml-mode")
 (depends-on "yasnippet")
