@@ -75,6 +75,10 @@
 (line-number-mode)
 (column-number-mode)
 
+;; C++ mode
+(setq c-default-style "linux"
+          c-basic-offset 4)
+
 ;; y/n for yes/no
 (defalias 'yes-or-no-p 'y-or-n-p)
 
