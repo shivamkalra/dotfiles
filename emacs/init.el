@@ -1,12 +1,12 @@
-;;; init --- Andrew Schwartzmeyer's Emacs init file
+;;; init --- Adapted from Andrew Schwartzmeyer's Emacs init file
 
 ;;; Commentary:
 ;;; Fully customized Emacs configurations
+(setq debug-on-error t)
 (require 'cask "~/.cask/cask.el")
 (cask-initialize)
 
 (require 'use-package)
-
 ;;; custom functions
 (defun my-yas/prompt (prompt choices &optional display-fn)
   (let* ((names (loop for choice in choices
@@ -82,11 +82,11 @@
 ;; y/n for yes/no
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-;; quit prompt
-(setq confirm-kill-emacs 'yes-or-no-p)
-
 ;; start week on Monday
 (setq calendar-week-start-day 1)
+
+;; indent with new line
+(define-key global-map (kbd "RET") 'newline-and-indent)
 
 ;; cursor settings
 (blink-cursor-mode)
@@ -107,15 +107,11 @@
 (which-function-mode)
 
 ;;; settings
-
 ;; enable all commands
 (setq disabled-command-function nil)
 
-;; kill whole line (including newline)
-(setq kill-whole-line t)
-
 ;; initial text mode
-(setq initial-major-mode 'text-mode)
+(setq initial-major-mode 'lisp-interaction-mode)
 
 ;; visual line mode for text
 (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
@@ -218,15 +214,6 @@
     (comment-or-uncomment-region beg end)))
 (bind-key "C-c c" 'comment-or-uncomment-region-or-line)
 
-;;; load files
-
-;; load local settings
-(mapc 'load-local '("local" "feeds"))
-
-;; load OS X configurations
-(when (eq system-type 'darwin)
-  (load-local "osx"))
-
 ;;; packages
 (use-package recentf
   :init
@@ -257,10 +244,6 @@
     (setq company-minimum-prefix-length 2
 	  company-idle-delay 0.1)
     (global-company-mode)))
-
-;; ein
-(use-package ein
-  :config (setq ein:use-auto-complete t))
 
 ;; elfeed
 (use-package elfeed
@@ -318,10 +301,6 @@
 	 ("C-<" . mc/mark-previous-like-this)
 	 ("C-c C-<" . mc/mark-all-like-this)))
 
-;; multi-term
-(use-package multi-term
-  :config (setq multi-term-program "bash"))
-
 ;; org-auto-fill
 (add-hook 'org-mode-hook 'turn-on-auto-fill)
 
@@ -361,9 +340,6 @@
   :diminish projectile-mode
   :config (projectile-global-mode))
 
-;; save kill ring
-(use-package savekill)
-
 ;; saveplace
 (use-package saveplace
   :config
@@ -384,10 +360,6 @@
   (progn (use-package smartparens-config)
 	 (smartparens-global-mode)
 	 (show-smartparens-global-mode)))
-
-;; smart tabs
-(use-package smart-tabs-mode
-  :config (smart-tabs-insinuate 'c 'c++ 'python 'ruby))
 
 ;; setup smex bindings
 (use-package smex
@@ -432,6 +404,7 @@
     (add-hook 'before-save-hook 'whitespace-cleanup)
     (setq whitespace-line-column 80 ;; limit line length
 	  whitespace-style '(face tabs empty trailing lines-tail))))
+
 ;; yasn\ippet
 (use-package yasnippet
   :config
