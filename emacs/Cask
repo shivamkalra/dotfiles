@@ -37,7 +37,6 @@
 (depends-on "projectile")
 (depends-on "puppet-mode")
 (depends-on "regex-tool")
-(depends-on "savekill")
 (depends-on "scratch")
 (depends-on "smartparens")
 (depends-on "smart-tabs-mode")
