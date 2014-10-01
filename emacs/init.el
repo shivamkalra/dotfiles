@@ -243,6 +243,7 @@
   (progn
     (setq company-minimum-prefix-length 2
 	  company-idle-delay 0.1)
+    (add-to-list 'company-backends 'company-c-headers)
     (global-company-mode)))
 
 ;; elfeed
