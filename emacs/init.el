@@ -45,10 +45,6 @@
 ;; projectile command map
 (bind-key* "M-[" 'projectile-command-map)
 
-;;; appearance
-;; no splash screen - thank you
-(setq inhibit-startup-message t
-      initial-buffer-choice t)
 ;; disable all menu(s)
 (progn
   (dolist (mode '(menu-bar-mode tool-bar-mode scroll-bar-mode))
@@ -58,7 +54,11 @@
 	     '(font . "Fantasque Sans Mono-10:weight=black"))
 
 (add-hook 'prog-mode-hook 'linum-mode t)
-(add-hook 'prog-mode-hook 'hl-line-mode t)
+(setq linum-format "%d ")
+
+(if window-system
+    (add-hook 'prog-mode-hook 'hl-line-mode t))
+
 ;; theme (wombat in terminal, solarized otherwise)
 (if (display-graphic-p)
     (use-package solarized
@@ -111,7 +111,7 @@
 (setq disabled-command-function nil)
 
 ;; initial text mode
-(setq initial-major-mode 'lisp-interaction-mode)
+;; (setq initial-major-mode 'lisp-interaction-mode)
 
 ;; visual line mode for text
 (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
