@@ -2,7 +2,7 @@
 
 ;;; Commentary:
 ;;; Fully customized Emacs configurations
-(setq debug-on-error t)
+;; (setq debug-on-error t)
 (require 'cask "~/.cask/cask.el")
 (cask-initialize)
 
@@ -53,12 +53,18 @@
 (progn
   (dolist (mode '(menu-bar-mode tool-bar-mode scroll-bar-mode))
     (when (fboundp mode) (funcall mode -1))))
+
 ;; set the *sick* fonts for gui
 (add-to-list 'default-frame-alist
 	     '(font . "Fantasque Sans Mono-10:weight=black"))
 
-(add-hook 'prog-mode-hook 'linum-mode t)
-(add-hook 'prog-mode-hook 'hl-line-mode t)
+(add-hook 'prog-mode-hook 'linum-mode)
+(if (not window-system)
+    (setq linum-format "%4d \u2502 "))
+
+(if window-system
+    (add-hook 'prog-mode-hook 'hl-line-mode t))
+
 ;; theme (wombat in terminal, solarized otherwise)
 (if (display-graphic-p)
     (use-package solarized
@@ -224,8 +230,8 @@
 ;; ace-jump-mode
 (use-package ace-jump-mode
   :config (eval-after-load "ace-jump-mode" '(ace-jump-mode-enable-mark-sync))
-  :bind (("C-." . ace-jump-mode)
-   	 ("C-," . ace-jump-mode-pop-mark)))
+  :bind (("C-x a" . ace-jump-mode)
+   	 ("C-x p" . ace-jump-mode-pop-mark)))
 
 ;; anzu
 (use-package anzu
@@ -241,6 +247,21 @@
 (use-package company
   :config
   (progn
+    (custom-set-faces
+     '(company-preview
+       ((t (:foreground "darkgray" :underline t))))
+     '(company-preview-common
+       ((t (:inherit company-preview))))
+     '(company-tooltip
+       ((t (:background "lightgray" :foreground "black"))))
+     '(company-tooltip-selection
+       ((t (:background "steelblue" :foreground "white"))))
+     '(company-tooltip-common
+       ((((type x)) (:inherit company-tooltip :weight bold))
+	(t (:inherit company-tooltip))))
+     '(company-tooltip-common-selection
+       ((((type x)) (:inherit company-tooltip-selection :weight bold))
+	(t (:inherit company-tooltip-selection)))))
     (setq company-minimum-prefix-length 2
 	  company-idle-delay 0.1)
     (global-company-mode)))
@@ -254,7 +275,7 @@
 
 ;; activate expand-region
 (use-package expand-region
-  :bind ("C-=" . er/expand-region))
+  :bind ("M-=" . er/expand-region))
 
 ;; flx-ido
 (use-package flx-ido
@@ -263,13 +284,6 @@
     (flx-ido-mode)
     (setq ido-enable-flex-matching t
 	  ido-use-faces nil)))
-
-;; flycheck
-(use-package flycheck
-  :config
-  (progn
-    (add-hook 'after-init-hook #'global-flycheck-mode)
-    (setq flycheck-completion-system 'ido)))
 
 ;; flyspell
 (use-package flyspell
@@ -290,16 +304,12 @@
 (use-package ido-vertical-mode
   :config (ido-vertical-mode))
 
-;; ledger
-(use-package ledger-mode
-  :config (add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode)))
-
 ;; multiple-cursors
 (use-package multiple-cursors
-  :bind (("C-S-c C-S-c" . mc/edit-lines)
-	 ("C->" . mc/mark-next-like-this)
-	 ("C-<" . mc/mark-previous-like-this)
-	 ("C-c C-<" . mc/mark-all-like-this)))
+  :bind (("C-c m e" . mc/edit-lines)
+	 ("C-c m f" . mc/mark-next-like-this)
+	 ("C-c m b" . mc/mark-previous-like-this)
+	 ("C-c m a" . mc/mark-all-like-this)))
 
 ;; org-auto-fill
 (add-hook 'org-mode-hook 'turn-on-auto-fill)
@@ -322,7 +332,6 @@
    (emacs-lisp . t)
    (haskell . t)
    (latex . t)
-   (ledger . t)
    (python . t)
    (ruby . t)
    (sh . t)))
@@ -392,10 +401,6 @@
 ;; uniquify
 (use-package uniquify
   :config (setq uniquify-buffer-name-style 'forward))
-
-;; setup virtualenvwrapper
-(use-package virtualenvwrapper
-  :config (setq venv-location "~/.virtualenvs/"))
 
 ;; whitespace
 (use-package whitespace

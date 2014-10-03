@@ -33,11 +33,11 @@ extract () {
 		*.7z)        7z x $filename        ;;
 		*)           echo "don't know how to extract '$1'..." ;;
 	    esac
-	    
+
 	    # restoring
 	    mv $filename $fileder
 	    # three because we moved a file, . and extracted files
-	    if [ $(find . -maxdepth 1 | wc -l) -eq 2 ]; then 
+	    if [ $(find . -maxdepth 1 | wc -l) -eq 2 ]; then
 		mv  -i * ../ && cd ../ && rm -rf _tmp_
 	    else
 		cd ../ && mv _tmp_ $foldername
@@ -110,17 +110,8 @@ if [[ "$TERM" == "screen" ]]; then
     alias tclip='tmux show-buffer -- | xclip -i -selection clipboard'
 fi
 
-CLEAR="\e[0m"
-RED="\e[31m"
-GREEN="\e[32m"
-YELLOW="\e[33m"
-BLUE="\e[34m"
+export PS1='\[\e]0;\w\a\]\n\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\n\$ '
 
-if [[ "$TERM" == "dumb" ]]; then
-    export PS1=">>> "
-else
-    export PS1="\[$RED\]>>\[$GREEN\]>>\[$BLUE\]>>\[$CLEAR\] "
-fi
 # Gtk themes
 export GTK2_RC_FILES="$HOME/.gtkrc-2.0"
 
