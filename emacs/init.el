@@ -47,8 +47,7 @@
 
 ;;; appearance
 ;; no splash screen - thank you
-(setq inhibit-startup-message t
-      initial-buffer-choice t)
+(setq inhibit-startup-message t)
 ;; disable all menu(s)
 (progn
   (dolist (mode '(menu-bar-mode tool-bar-mode scroll-bar-mode))
