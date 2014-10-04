@@ -1,0 +1,9 @@
+#!/bin/bash
+
+path="."
+if [[ $# -gt 0 ]]; then
+    path="$1"
+fi
+
+# open file manager
+/bin/thunar "$path"
