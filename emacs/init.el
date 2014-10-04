@@ -54,7 +54,7 @@
 	     '(font . "Fantasque Sans Mono-10:weight=black"))
 
 (add-hook 'prog-mode-hook 'linum-mode t)
-(setq linum-format "%d ")
+(if (not window-system) (setq linum-format "%d "))
 
 (if window-system
     (add-hook 'prog-mode-hook 'hl-line-mode t))
@@ -265,13 +265,6 @@
     (setq ido-enable-flex-matching t
 	  ido-use-faces nil)))
 
-;; flycheck
-(use-package flycheck
-  :config
-  (progn
-    (add-hook 'after-init-hook #'global-flycheck-mode)
-    (setq flycheck-completion-system 'ido)))
-
 ;; flyspell
 (use-package flyspell
   :config (setq ispell-program-name "aspell" ; use aspell instead of ispell
@@ -290,10 +283,6 @@
 ;; ido-vertical
 (use-package ido-vertical-mode
   :config (ido-vertical-mode))
-
-;; ledger
-(use-package ledger-mode
-  :config (add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode)))
 
 ;; multiple-cursors
 (use-package multiple-cursors
@@ -323,7 +312,6 @@
    (emacs-lisp . t)
    (haskell . t)
    (latex . t)
-   (ledger . t)
    (python . t)
    (ruby . t)
    (sh . t)))
