@@ -2,7 +2,8 @@
 
 ;;; Commentary:
 ;;; Fully customized Emacs configurations
-(setq debug-on-error t)
+;; (setq debug-on-error t)
+
 (require 'cask "~/.cask/cask.el")
 (cask-initialize)
 
@@ -41,6 +42,7 @@
 (bind-key "C-r" 'isearch-backward-regexp)
 (bind-key "C-M-s" 'isearch-forward)
 (bind-key "C-M-r" 'isearch-backward)
+(bind-key "C-c g" 'magit-status)
 
 ;; projectile command map
 (bind-key* "M-[" 'projectile-command-map)
@@ -54,6 +56,7 @@
 	     '(font . "Fantasque Sans Mono-10:weight=black"))
 
 (add-hook 'prog-mode-hook 'linum-mode t)
+
 (if (not window-system) (setq linum-format "%d "))
 
 (if window-system
