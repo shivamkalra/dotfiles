@@ -259,12 +259,12 @@ globalkeys = awful.util.table.join(
 	 awful.util.spawn("amixer set Master toggle", false)
 	 volume_widget:set_text(volume_info())
    end),
-   awful.key({ modkey }, "Home", function()
-	 awful.util.spawn("xbacklight -inc 5", false)
-   end),
-   awful.key({ modkey }, "End", function()
-	 awful.util.spawn("xbacklight -dec 5", false)
-   end),
+   -- awful.key({ modkey }, "Home", function()
+   -- 	 awful.util.spawn("xbacklight -inc 5", false)
+   -- end),
+   -- awful.key({ modkey }, "End", function()
+   -- 	 awful.util.spawn("xbacklight -dec 5", false)
+   -- end),
    awful.key({ modkey, }, "Left", awful.tag.viewprev ),
    awful.key({ modkey, }, "Right", awful.tag.viewnext ),
    awful.key({ modkey, }, "Escape", awful.tag.history.restore),
@@ -285,7 +285,7 @@ globalkeys = awful.util.table.join(
    -- open chrome with Mod + c
    awful.key({ modkey, }, "c",
       function (c) awful.util.spawn("chromium") end),
-   
+
    awful.key({ modkey, "Shift" }, "Right",
       function (c)
 	 local curidx = awful.tag.getidx()
@@ -488,7 +488,7 @@ battery_widget:set_text(battery_info("BAT0"))
 volume_widget:set_text(volume_info())
 
 client.connect_signal(
-   "manage",   
+   "manage",
    function (c, startup)
       -- Enable sloppy focus
       c:connect_signal("mouse::enter", function(c)
