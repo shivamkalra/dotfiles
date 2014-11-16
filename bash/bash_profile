@@ -51,3 +51,7 @@ fi
 RUBY_VERSION="2.1.0"
 #Adding path Variables
 PATH=$PATH:${HOME}/bin:${HOME}/.gem/ruby/$RUBY_VERSION/bin:${HOME}/.cask/bin
+
+#Python Environment
+export WORKON_HOME=~/projects/pyvenvs
+source /usr/bin/virtualenvwrapper_lazy.sh

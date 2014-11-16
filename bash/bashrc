@@ -97,9 +97,8 @@ alias rm="rm -i"
 alias p="cd ${HOME}/projects/"
 #git
 alias git-root='cd "$(git rev-parse --show-toplevel)"'
-# office
-alias klick-pradaxa="ssh skalra@pradaxastaging.klick.com"
 alias ~="cd ~"
+alias mkvirtualenv2="mkvirtualenv --python=/bin/python2"
 
 # TODO: Find better fix
 # this is alias defined only for TMUX shells

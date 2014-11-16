@@ -42,3 +42,4 @@
 (depends-on "yaml-mode")
 (depends-on "yasnippet")
 (depends-on "company-c-headers")
+(depends-on "elpy")
