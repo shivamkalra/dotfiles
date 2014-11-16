@@ -135,7 +135,7 @@ if [ -f ~/.git-completion.bash ]; then
 fi
 
 #Python Environment
-export WORKON_HOME=~/projects/pyvenvs
+export WORKON_HOME=$HOME/.virtualenvs
 source /usr/bin/virtualenvwrapper_lazy.sh
 
 #Adding path Variables
