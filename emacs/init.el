@@ -334,19 +334,36 @@
     ;; cannot use :bind for keymap
     (global-set-key (kbd "C-z") popwin:keymap)))
 
+(defun switch-pyvenv-for-project()
+  "Switching Python virtual environment for the project switch"
+  ;; check if project name exists in Python virtual environments
+  (let (project-name)
+    (setq project-name (projectile-project-name))
+    (unless (string-equal project-name pyvenv-virtual-env-name)
+      (if (member project-name (pyvenv-virtualenv-list))
+	  (if (yes-or-no-p (format "Switch virtualenv to [%s]?" project-name))
+	      (progn
+		(pyvenv-workon project-name)
+		(message (format "Switched to [%s]." project-name))))
+	))))
+
 ;; projectile
 (use-package projectile
   :diminish projectile-mode
-  :config (projectile-global-mode))
-
-;; saveplace
-(use-package saveplace
   :config
-  (setq-default save-place t
-		save-place-file (f-expand "saved-places" user-emacs-directory )))
-;; scratch
-(use-package scratch
-  :bind ("C-c s" . scratch))
+  (progn
+    (projectile-global-mode)
+    (setq projectile-switch-project-action 'projectile-dired)
+    (add-hook 'projectile-switch-project-hook 'switch-pyvenv-for-project)))
+
+  ;; saveplace
+  (use-package saveplace
+    :config
+    (setq-default save-place t
+		  save-place-file (f-expand "saved-places" user-emacs-directory )))
+  ;; scratch
+  (use-package scratch
+    :bind ("C-c s" . scratch))
 
 ;; slime
 (use-package sly-autoloads
