@@ -319,6 +319,13 @@
    (ruby . t)
    (sh . t)))
 
+;; elpy
+(use-package elpy
+  :config
+  (progn
+    (elpy-enable)
+    (elpy-use-ipython)))
+
 ;; popwin
 (use-package popwin
   :config
