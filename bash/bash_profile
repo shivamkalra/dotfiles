@@ -26,6 +26,8 @@ fi
 
 # source the bashrc
 . $HOME/.bashrc
+
+# This is called on login shells
 SSH_ENV="$HOME/.ssh/environment"
 
 function start_agent {
@@ -47,11 +49,3 @@ if [ -f "${SSH_ENV}" ]; then
 else
     start_agent;
 fi
-
-RUBY_VERSION="2.1.0"
-#Adding path Variables
-PATH=$PATH:${HOME}/bin:${HOME}/.gem/ruby/$RUBY_VERSION/bin:${HOME}/.cask/bin
-
-#Python Environment
-export WORKON_HOME=~/projects/pyvenvs
-source /usr/bin/virtualenvwrapper_lazy.sh
