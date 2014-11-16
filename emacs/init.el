@@ -328,12 +328,10 @@
 
 ;; git
 (use-package git-gutter
-  :init
-  (progn
-    (global-git-gutter-mode t)
-    (git-gutter:linum-setup))
+  :init (global-git-gutter-mode t)
   :config
   (progn
+    (require 'git-gutter-fringe)
     (global-set-key (kbd "C-x C-g") 'git-gutter:toggle)
     (global-set-key (kbd "C-x v =") 'git-gutter:popup-hunk)
     ;; Jump to next/previous hunk
