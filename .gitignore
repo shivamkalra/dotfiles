@@ -8,5 +8,5 @@ mpd/log
 mpd/pid
 mpd/sticker.sql
 mpd/database
-mpd/playlists
+mpd/playlists/
 mpd/state
