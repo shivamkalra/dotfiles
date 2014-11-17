@@ -4,3 +4,8 @@ emacs/elpa
 emacs/eshell
 emacs/**/*.eld
 emacs/**/*.dat
+mpd/log
+mpd/pid
+mpd/sticker.sql
+mpd/database/
+mpd/playlists/

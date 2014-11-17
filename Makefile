@@ -28,8 +28,7 @@ install-xorg:
 
 install-mpd:
 	rm -rf ~/.config/mpd
-	mkdir -p ~/.config/mpd
-	ln -s `pwd`/mpd/mpdconf ~/.config/mpd/mpd.config
+	ln -s `pwd`/mpd/ ~/.config/mpd
 
 install-ncmpcpp:
 	rm -rf ~/.ncmpcpp
