@@ -17,8 +17,8 @@ xbindkeys &
 # start openbox
 #/usr/bin/openbox-session > ~/.openbox_startup.log 2>&1
 
-# MPD daemon start (if no other user instance exists)
-[ ! -s ~/.config/mpd/pid ] && mpd
+# MPD daemon start
+/bin/mpd
 
 #pulse audio
 /usr/bin/start-pulseaudio-x11

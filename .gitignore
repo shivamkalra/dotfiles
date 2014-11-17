@@ -7,5 +7,6 @@ emacs/**/*.dat
 mpd/log
 mpd/pid
 mpd/sticker.sql
-mpd/database/
-mpd/playlists/
+mpd/database
+mpd/playlists
+mpd/state
