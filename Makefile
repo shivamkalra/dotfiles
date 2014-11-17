@@ -27,8 +27,9 @@ install-xorg:
 	ln -s `pwd`/xorg/dircolors-solarized/dircolors.ansi-dark ~/.lscolors
 
 install-mpd:
-	rm -f ~/.mpdconf
-	ln -s `pwd`/mpd/mpdconf ~/.mpdconf
+	rm -rf ~/.config/mpd
+	mkdir -p ~/.config/mpd
+	ln -s `pwd`/mpd/mpdconf ~/.config/mpd/mpd.config
 
 install-ncmpcpp:
 	rm -rf ~/.ncmpcpp

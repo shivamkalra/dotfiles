@@ -17,8 +17,10 @@ xbindkeys &
 # start openbox
 #/usr/bin/openbox-session > ~/.openbox_startup.log 2>&1
 
-# start the music player daemon
-/usr/bin/mpd
+# MPD daemon start (if no other user instance exists)
+[ ! -s ~/.config/mpd/pid ] && mpd
+
+#pulse audio
 /usr/bin/start-pulseaudio-x11
 
 # start wm now!
