@@ -32,6 +32,11 @@
       (message "Opening file...")
     (message "Aborting")))
 
+(defun ido-pyvenv-workon()
+  "Use `ido-completing-read' to \\[pyvenv-workon] a Python environments"
+  (interactive)
+  (pyvenv-workon (ido-completing-read "Work on: " (pyvenv-virtualenv-list))))
+
 ;;; shortcuts
 ;; miscellaneous
 (bind-key "C-c a" 'org-agenda)
@@ -43,6 +48,9 @@
 (bind-key "C-M-s" 'isearch-forward)
 (bind-key "C-M-r" 'isearch-backward)
 (bind-key "C-c g" 'magit-status)
+
+(add-hook 'python-mode-hook
+	  (lambda () (define-key python-mode-map (kbd "C-x C-e") 'ido-pyvenv-workon)))
 
 ;; projectile command map
 (bind-key* "M-[" 'projectile-command-map)
