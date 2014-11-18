@@ -1,6 +1,6 @@
 #!/bin/bash
 # Print some cows
-cowsay "Testing Cow" 2> /dev/null
+cowsay "Hello Cow" 2> /dev/null
 
 ################################################################
 # Functions                                                    #
