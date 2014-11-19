@@ -120,11 +120,11 @@ BLUE="\e[34m"
 
 if [[ "$TERM" == "dumb" ]]; then
     export PS1=">>> "
+elif [[ "$TERM" == "eterm-color" ]]; then
+    export PS1='[\w] \u@\h$ '
+    export PROMPT_COMMAND=""
 else
     export PS1="\[$RED\]>>\[$GREEN\]>>\[$BLUE\]>>\[$CLEAR\] "
-    if [[ "$TERM" == "eterm-color" ]]; then
-	export PROMPT_COMMAND=""
-    fi
 fi
 # Gtk themes
 export GTK2_RC_FILES="$HOME/.gtkrc-2.0"
