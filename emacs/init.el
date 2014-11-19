@@ -32,6 +32,15 @@
       (message "Opening file...")
     (message "Aborting")))
 
+;; https://github.com/m2ym/popwin-el/blob/master/misc/popwin-term.el
+(defun popwin:term ()
+  (interactive)
+  (popwin:display-buffer
+   (or (get-buffer "*terminal*")
+       (save-window-excursion
+         (call-interactively 'term)))))
+
+
 (defun ido-pyvenv-workon()
   "Use `ido-completing-read' to \\[pyvenv-workon] a Python environments"
   (interactive)
@@ -40,6 +49,7 @@
 ;;; shortcuts
 ;; miscellaneous
 (bind-key "C-c a" 'org-agenda)
+(bind-key "C-c t" 'popwin:term)
 (bind-key "C-c <tab>" 'company-complete)
 (bind-key "C-x C-r" 'ido-recentf-open)
 ;; isearch
@@ -352,11 +362,10 @@
 
 ;; popwin
 (use-package popwin
+  :init (popwin-mode 1)
   :config
   (progn
-    (popwin-mode)
-    ;; cannot use :bind for keymap
-    (global-set-key (kbd "C-z") popwin:keymap)))
+    (push '(term-mode :height 16 :stick t) popwin:special-display-config)))
 
 (defun switch-pyvenv-for-project()
   "Switching Python virtual environment for the project switch"
