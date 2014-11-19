@@ -235,8 +235,8 @@
 ;; ace-jump-mode
 (use-package ace-jump-mode
   :config (eval-after-load "ace-jump-mode" '(ace-jump-mode-enable-mark-sync))
-  :bind (("C-." . ace-jump-mode)
-   	 ("C-," . ace-jump-mode-pop-mark)))
+  :bind (("C-c SPC" . ace-jump-mode)
+   	 ("C-c ." . ace-jump-mode-pop-mark)))
 
 ;; anzu
 (use-package anzu
