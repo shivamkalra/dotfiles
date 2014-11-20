@@ -44,11 +44,14 @@
 (defun ido-pyvenv-workon()
   "Use `ido-completing-read' to \\[pyvenv-workon] a Python environments"
   (interactive)
-  (pyvenv-workon (ido-completing-read "Work on: " (pyvenv-virtualenv-list))))
+  (pyvenv-workon
+   (ido-completing-read (format "Work on (%s): " pyvenv-virtual-env-name)
+			(pyvenv-virtualenv-list))))
 
 ;;; shortcuts
 ;; miscellaneous
 (bind-key "C-c a" 'org-agenda)
+(bind-key "C-c r" 'revert-buffer)
 (bind-key "C-c t" 'popwin:term)
 (bind-key "C-c <tab>" 'company-complete)
 (bind-key "C-x C-r" 'ido-recentf-open)
