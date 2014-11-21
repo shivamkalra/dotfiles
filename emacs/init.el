@@ -48,9 +48,17 @@
    (ido-completing-read (format "Work on (%s): " pyvenv-virtual-env-name)
 			(pyvenv-virtualenv-list))))
 
+(defun sk-funcs:searchyoutube(keyword)
+  "This function calls yplay script to play the song from minibuffer"
+  (interactive "sKeywords: ")
+  (save-window-excursion
+    (async-shell-command
+     (format "yplay %s" keyword))))
+
 ;;; shortcuts
 ;; miscellaneous
 (bind-key "C-c a" 'org-agenda)
+(bind-key "C-c q" 'howdoi-query-line-at-point-replace-by-code-snippet)
 (bind-key "C-c r" 'revert-buffer)
 (bind-key "C-c t" 'popwin:term)
 (bind-key "C-c <tab>" 'company-complete)
@@ -61,6 +69,7 @@
 (bind-key "C-M-s" 'isearch-forward)
 (bind-key "C-M-r" 'isearch-backward)
 (bind-key "C-c g" 'magit-status)
+(bind-key "C-c y" 'sk-funcs:searchyoutube)
 
 (add-hook 'python-mode-hook
 	  (lambda () (define-key python-mode-map (kbd "C-x C-e") 'ido-pyvenv-workon)))
@@ -213,7 +222,6 @@
  dired-recursive-deletes 'top)
 
 ;;; functions
-
 ;; load local file
 (defun load-local (file)
   "Load FILE from ~/.emacs.d, okay if missing."
