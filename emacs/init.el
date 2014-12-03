@@ -48,12 +48,31 @@
    (ido-completing-read (format "Work on (%s): " pyvenv-virtual-env-name)
 			(pyvenv-virtualenv-list))))
 
-(defun sk-funcs:searchyoutube(keyword)
+(defun sk/search-youtube(keyword)
   "This function calls yplay script to play the song from minibuffer"
   (interactive "sKeywords: ")
   (save-window-excursion
     (async-shell-command
      (format "yplay %s" keyword))))
+
+;; better delete char functions
+(defun sk/delete-backward-char()
+  "This function zaps to the last non-whitespace character"
+  (interactive)
+  (let (rel-move)
+    (setq rel-move (skip-chars-backward " \t\n"))
+    (if (= rel-move 0)
+	(delete-backward-char 1)
+      (delete-backward-char rel-move))))
+
+(defun sk/delete-forward-char()
+  "This function zaps to the next non-whitespace character"
+  (interactive)
+  (let (rel-move)
+    (setq rel-move (skip-chars-forward " \t\n"))
+    (if (= rel-move 0)
+	(delete-forward-char 1)
+      (delete-backward-char rel-move))))
 
 ;;; shortcuts
 ;; miscellaneous
@@ -63,14 +82,18 @@
 (bind-key "C-c t" 'popwin:term)
 (bind-key "C-c <tab>" 'company-complete)
 (bind-key "C-x C-r" 'ido-recentf-open)
+(bind-key "C-d" 'sk/delete-forward-char)
+(bind-key (kbd "<backspace>") 'sk/delete-backward-char)
+
 ;; isearch
 (bind-key "C-s" 'isearch-forward-regexp)
 (bind-key "C-r" 'isearch-backward-regexp)
 (bind-key "C-M-s" 'isearch-forward)
 (bind-key "C-M-r" 'isearch-backward)
 (bind-key "C-c g" 'magit-status)
-(bind-key "C-c y" 'sk-funcs:searchyoutube)
+(bind-key "C-c y" 'sk/search-youtube)
 
+;; sk utils
 (add-hook 'python-mode-hook
 	  (lambda () (define-key python-mode-map (kbd "C-x C-e") 'ido-pyvenv-workon)))
 
