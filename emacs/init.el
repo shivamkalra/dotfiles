@@ -82,8 +82,6 @@
 (bind-key "C-c t" 'popwin:term)
 (bind-key "C-c <tab>" 'company-complete)
 (bind-key "C-x C-r" 'ido-recentf-open)
-(bind-key "C-d" 'sk/delete-forward-char)
-(bind-key (kbd "<backspace>") 'sk/delete-backward-char)
 
 ;; isearch
 (bind-key "C-s" 'isearch-forward-regexp)
