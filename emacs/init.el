@@ -59,20 +59,24 @@
 (defun sk/delete-backward-char()
   "This function zaps to the last non-whitespace character"
   (interactive)
-  (let (rel-move)
-    (setq rel-move (skip-chars-backward " \t\n"))
-    (if (= rel-move 0)
-	(delete-backward-char 1)
-      (delete-backward-char rel-move))))
+  (if (region-active-p)
+      (delete-active-region)
+    (let (rel-move)
+      (setq rel-move (skip-chars-backward " \t\n"))
+      (if (= rel-move 0)
+	  (delete-backward-char 1)
+	(delete-backward-char rel-move)))))
 
 (defun sk/delete-forward-char()
   "This function zaps to the next non-whitespace character"
   (interactive)
-  (let (rel-move)
-    (setq rel-move (skip-chars-forward " \t\n"))
-    (if (= rel-move 0)
-	(delete-forward-char 1)
-      (delete-backward-char rel-move))))
+  (if (region-active-p)
+      (delete-active-region)
+    (let (rel-move)
+      (setq rel-move (skip-chars-forward " \t\n"))
+      (if (= rel-move 0)
+	  (delete-forward-char 1)
+	(delete-backward-char rel-move)))))
 
 ;;; shortcuts
 ;; miscellaneous
@@ -82,6 +86,8 @@
 (bind-key "C-c t" 'popwin:term)
 (bind-key "C-c <tab>" 'company-complete)
 (bind-key "C-x C-r" 'ido-recentf-open)
+(bind-key (kbd "<backspace>") 'sk/delete-backward-char)
+(bind-key (kbd "<del>") 'sk/delete-backward-char)
 
 ;; isearch
 (bind-key "C-s" 'isearch-forward-regexp)
