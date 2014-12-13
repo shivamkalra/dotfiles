@@ -48,6 +48,12 @@
    (ido-completing-read (format "Work on (%s): " pyvenv-virtual-env-name)
 			(pyvenv-virtualenv-list))))
 
+(defun sk/term-toggle-mode ()
+  (interactive)
+  (if (term-in-line-mode)
+      (term-char-mode)
+    (term-line-mode)))
+
 (defun sk/youtube-search(keyword)
   "This function calls yplay script to play the song from minibuffer"
   (interactive "sKeywords: ")
@@ -96,6 +102,7 @@
 (bind-key "C-M-r" 'isearch-backward)
 (bind-key "C-c g" 'magit-status)
 (bind-key "C-c y" 'sk/youtube-search)
+(bind-key "C-c t" 'sk/term-toggle-mode)
 
 ;; sk utils
 (add-hook 'python-mode-hook
