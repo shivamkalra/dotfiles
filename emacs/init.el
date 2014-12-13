@@ -40,7 +40,6 @@
        (save-window-excursion
          (call-interactively 'term)))))
 
-
 (defun ido-pyvenv-workon()
   "Use `ido-completing-read' to \\[pyvenv-workon] a Python environments"
   (interactive)
