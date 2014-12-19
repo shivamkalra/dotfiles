@@ -121,7 +121,7 @@ BLUE="\e[34m"
 if [[ "$TERM" == "dumb" ]]; then
     export PS1=">>> "
 elif [[ "$TERM" == "eterm-color" ]]; then
-    export PS1='[\w]\n\u@\h$ '
+    export PS1="\[$GREEN\][\w]\n\[$YELLOW\]\u@\h$\[$CLEAR\] "
     export PROMPT_COMMAND=""
 else
     export PS1="\[$RED\]>>\[$GREEN\]>>\[$BLUE\]>>\[$CLEAR\] "
