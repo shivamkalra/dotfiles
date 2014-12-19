@@ -103,6 +103,7 @@
 (bind-key "C-c y" 'sk/youtube-search)
 (bind-key "C-c t" 'sk/term-toggle-mode)
 
+(setq default-directory "~/projects")
 ;; sk utils
 (add-hook 'python-mode-hook
 	  (lambda () (define-key python-mode-map (kbd "C-x C-e") 'ido-pyvenv-workon)))
