@@ -284,85 +284,6 @@ buffer.
   :config
   (setq smooth-scroll-margin 4))
 #+END_SRC
-*** smartparens
-So, paredit is great, however, it doesn't work for non-lisp modes. Smartparens
-works pretty well, so I use it everywhere paredit-mode doesn't work.
-
-#+BEGIN_SRC emacs-lisp
-(use-package smartparens
-  :bind (("M-9" . sp-backward-sexp)
-         ("M-0" . sp-forward-sexp))
-  :config
-  (progn
-    (add-to-list 'sp-sexp-suffix '(json-mode regex ""))
-    (add-to-list 'sp-sexp-suffix '(es-mode regex ""))
-
-    (use-package smartparens-config)
-    (add-hook 'sh-mode-hook
-              (lambda ()
-                ;; Remove when https://github.com/Fuco1/smartparens/issues/257
-                ;; is fixed
-                (setq sp-autoescape-string-quote nil)))
-
-    ;; Remove the M-<backspace> binding that smartparens adds
-    (let ((disabled '("M-<backspace>")))
-      (setq sp-smartparens-bindings
-            (cl-remove-if (lambda (key-command)
-                            (member (car key-command) disabled))
-                          sp-smartparens-bindings)))
-
-    (define-key sp-keymap (kbd "C-(") 'sp-forward-barf-sexp)
-    (define-key sp-keymap (kbd "C-)") 'sp-forward-slurp-sexp)
-    (define-key sp-keymap (kbd "M-(") 'sp-forward-barf-sexp)
-    (define-key sp-keymap (kbd "M-)") 'sp-forward-slurp-sexp)
-    (define-key sp-keymap (kbd "C-M-f") 'sp-forward-sexp)
-    (define-key sp-keymap (kbd "C-M-b") 'sp-backward-sexp)
-    (define-key sp-keymap (kbd "C-M-f") 'sp-forward-sexp)
-    (define-key sp-keymap (kbd "C-M-b") 'sp-backward-sexp)
-    (define-key sp-keymap (kbd "C-M-d") 'sp-down-sexp)
-    (define-key sp-keymap (kbd "C-M-a") 'sp-backward-down-sexp)
-    (define-key sp-keymap (kbd "C-S-a") 'sp-beginning-of-sexp)
-    (define-key sp-keymap (kbd "C-S-d") 'sp-end-of-sexp)
-    (define-key sp-keymap (kbd "C-M-e") 'sp-up-sexp)
-    (define-key emacs-lisp-mode-map (kbd ")") 'sp-up-sexp)
-    (define-key sp-keymap (kbd "C-M-u") 'sp-backward-up-sexp)
-    (define-key sp-keymap (kbd "C-M-t") 'sp-transpose-sexp)
-    ;; (define-key sp-keymap (kbd "C-M-n") 'sp-next-sexp)
-    ;; (define-key sp-keymap (kbd "C-M-p") 'sp-previous-sexp)
-    (define-key sp-keymap (kbd "C-M-k") 'sp-kill-sexp)
-    (define-key sp-keymap (kbd "C-M-w") 'sp-copy-sexp)
-    (define-key sp-keymap (kbd "M-D") 'sp-splice-sexp)
-    (define-key sp-keymap (kbd "C-]") 'sp-select-next-thing-exchange)
-    (define-key sp-keymap (kbd "C-<left_bracket>") 'sp-select-previous-thing)
-    (define-key sp-keymap (kbd "C-M-]") 'sp-select-next-thing)
-    (define-key sp-keymap (kbd "M-F") 'sp-forward-symbol)
-    (define-key sp-keymap (kbd "M-B") 'sp-backward-symbol)
-    (define-key sp-keymap (kbd "H-t") 'sp-prefix-tag-object)
-    (define-key sp-keymap (kbd "H-p") 'sp-prefix-pair-object)
-    (define-key sp-keymap (kbd "H-s c") 'sp-convolute-sexp)
-    (define-key sp-keymap (kbd "H-s a") 'sp-absorb-sexp)
-    (define-key sp-keymap (kbd "H-s e") 'sp-emit-sexp)
-    (define-key sp-keymap (kbd "H-s p") 'sp-add-to-previous-sexp)
-    (define-key sp-keymap (kbd "H-s n") 'sp-add-to-next-sexp)
-    (define-key sp-keymap (kbd "H-s j") 'sp-join-sexp)
-    (define-key sp-keymap (kbd "H-s s") 'sp-split-sexp)
-
-    (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
-    ;; Remove '' pairing in elisp because quoting is used a ton
-    (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
-
-    (sp-with-modes '(html-mode sgml-mode)
-      (sp-local-pair "<" ">"))
-
-    (sp-with-modes sp--lisp-modes
-      (sp-local-pair "(" nil :bind "C-("))))
-
-
-(add-hook 'prog-mode-hook
-          (lambda ()
-            (smartparens-global-mode t)
-            (show-smartparens-global-mode t)))
-#+END_SRC
 *** ido-mode
 First, turn on ido-mode everywhere, and if flx-ido is installed, enable it
 everywhere as well.
@@ -396,19 +317,6 @@ instead of rigid completions
     :init (ido-ubiquitous 1))
 #+END_SRC
 
-*** undo-tree
-Undo-tree allows me to have sane undo defaults, as well as being able to
-visualize it in ascii art if needed.
-
-#+BEGIN_SRC emacs-lisp
-(use-package undo-tree
-  :idle (global-undo-tree-mode t)
-  :diminish ""
-  :config
-  (progn
-    (define-key undo-tree-map (kbd "C-x u") 'undo-tree-visualize)
-    (define-key undo-tree-map (kbd "C-/") 'undo-tree-undo)))
-#+END_SRC
 *** smex
 Smex is IDO, but for =M-x=
 
@@ -416,16 +324,6 @@ Smex is IDO, but for =M-x=
 (use-package smex
   :bind (("M-x" . smex)
          ("M-X" . smex-major-mode-commands)))
-#+END_SRC
-*** multiple-cursors
-Mulitple cursors is like rectangular selection/insertion but on steroids
-
-#+BEGIN_SRC emacs-lisp
-(use-package multiple-cursors
-  :bind (("C-S-c C-S-c" . mc/edit-lines)
-         ("C->" . mc/mark-next-like-this)
-         ("C-<" . mc/mark-previous-like-this)
-         ("C-c C-<" . mc/mark-all-like-this)))
 #+END_SRC
 *** anzu mode
 [[https://github.com/syohex/emacs-anzu][anzu.el]] is an Emacs port of =anzu.vim=. It provides a minor mode
@@ -788,6 +686,109 @@ There's =tern= also, but I leave it turned off by default
 (use-package tern
   :init ;;(add-hook 'js-mode-hook (lambda () (tern-mode t)))
   )
+#+END_SRC
+** Editing
+*** multiple-cursors
+Mulitple cursors is like rectangular selection/insertion but on steroids
+
+#+BEGIN_SRC emacs-lisp
+(use-package multiple-cursors
+  :bind (("C-S-c C-S-c" . mc/edit-lines)
+         ("C->" . mc/mark-next-like-this)
+         ("C-<" . mc/mark-previous-like-this)
+         ("C-c C-<" . mc/mark-all-like-this)))
+#+END_SRC
+*** undo-tree
+Undo-tree allows me to have sane undo defaults, as well as being able to
+visualize it in ascii art if needed.
+
+#+BEGIN_SRC emacs-lisp
+(use-package undo-tree
+  :idle (global-undo-tree-mode t)
+  :diminish ""
+  :config
+  (progn
+    (define-key undo-tree-map (kbd "C-x u") 'undo-tree-visualize)
+    (define-key undo-tree-map (kbd "C-/") 'undo-tree-undo)))
+#+END_SRC
+*** smartparens
+So, paredit is great, however, it doesn't work for non-lisp modes. Smartparens
+works pretty well, so I use it everywhere paredit-mode doesn't work.
+
+#+BEGIN_SRC emacs-lisp
+(use-package smartparens
+  :bind (("M-9" . sp-backward-sexp)
+         ("M-0" . sp-forward-sexp))
+  :config
+  (progn
+    (add-to-list 'sp-sexp-suffix '(json-mode regex ""))
+    (add-to-list 'sp-sexp-suffix '(es-mode regex ""))
+
+    (use-package smartparens-config)
+    (add-hook 'sh-mode-hook
+              (lambda ()
+                ;; Remove when https://github.com/Fuco1/smartparens/issues/257
+                ;; is fixed
+                (setq sp-autoescape-string-quote nil)))
+
+    ;; Remove the M-<backspace> binding that smartparens adds
+    (let ((disabled '("M-<backspace>")))
+      (setq sp-smartparens-bindings
+            (cl-remove-if (lambda (key-command)
+                            (member (car key-command) disabled))
+                          sp-smartparens-bindings)))
+
+    (define-key sp-keymap (kbd "C-(") 'sp-forward-barf-sexp)
+    (define-key sp-keymap (kbd "C-)") 'sp-forward-slurp-sexp)
+    (define-key sp-keymap (kbd "M-(") 'sp-forward-barf-sexp)
+    (define-key sp-keymap (kbd "M-)") 'sp-forward-slurp-sexp)
+    (define-key sp-keymap (kbd "C-M-f") 'sp-forward-sexp)
+    (define-key sp-keymap (kbd "C-M-b") 'sp-backward-sexp)
+    (define-key sp-keymap (kbd "C-M-f") 'sp-forward-sexp)
+    (define-key sp-keymap (kbd "C-M-b") 'sp-backward-sexp)
+    (define-key sp-keymap (kbd "C-M-d") 'sp-down-sexp)
+    (define-key sp-keymap (kbd "C-M-a") 'sp-backward-down-sexp)
+    (define-key sp-keymap (kbd "C-S-a") 'sp-beginning-of-sexp)
+    (define-key sp-keymap (kbd "C-S-d") 'sp-end-of-sexp)
+    (define-key sp-keymap (kbd "C-M-e") 'sp-up-sexp)
+    (define-key emacs-lisp-mode-map (kbd ")") 'sp-up-sexp)
+    (define-key sp-keymap (kbd "C-M-u") 'sp-backward-up-sexp)
+    (define-key sp-keymap (kbd "C-M-t") 'sp-transpose-sexp)
+    ;; (define-key sp-keymap (kbd "C-M-n") 'sp-next-sexp)
+    ;; (define-key sp-keymap (kbd "C-M-p") 'sp-previous-sexp)
+    (define-key sp-keymap (kbd "C-M-k") 'sp-kill-sexp)
+    (define-key sp-keymap (kbd "C-M-w") 'sp-copy-sexp)
+    (define-key sp-keymap (kbd "M-D") 'sp-splice-sexp)
+    (define-key sp-keymap (kbd "C-]") 'sp-select-next-thing-exchange)
+    (define-key sp-keymap (kbd "C-<left_bracket>") 'sp-select-previous-thing)
+    (define-key sp-keymap (kbd "C-M-]") 'sp-select-next-thing)
+    (define-key sp-keymap (kbd "M-F") 'sp-forward-symbol)
+    (define-key sp-keymap (kbd "M-B") 'sp-backward-symbol)
+    (define-key sp-keymap (kbd "H-t") 'sp-prefix-tag-object)
+    (define-key sp-keymap (kbd "H-p") 'sp-prefix-pair-object)
+    (define-key sp-keymap (kbd "H-s c") 'sp-convolute-sexp)
+    (define-key sp-keymap (kbd "H-s a") 'sp-absorb-sexp)
+    (define-key sp-keymap (kbd "H-s e") 'sp-emit-sexp)
+    (define-key sp-keymap (kbd "H-s p") 'sp-add-to-previous-sexp)
+    (define-key sp-keymap (kbd "H-s n") 'sp-add-to-next-sexp)
+    (define-key sp-keymap (kbd "H-s j") 'sp-join-sexp)
+    (define-key sp-keymap (kbd "H-s s") 'sp-split-sexp)
+
+    (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
+    ;; Remove '' pairing in elisp because quoting is used a ton
+    (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
+
+    (sp-with-modes '(html-mode sgml-mode)
+      (sp-local-pair "<" ">"))
+
+    (sp-with-modes sp--lisp-modes
+      (sp-local-pair "(" nil :bind "C-("))))
+
+
+(add-hook 'prog-mode-hook
+          (lambda ()
+            (smartparens-global-mode t)
+            (show-smartparens-global-mode t)))
 #+END_SRC
 ** Version control
 *** magit
