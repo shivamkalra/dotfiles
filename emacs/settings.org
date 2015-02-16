@@ -51,7 +51,7 @@ tool. Cask and Pallet is initialized from =init.el=:
   (require 'pallet)
 #+END_SRC
 * Configuration
-** Appearance, looks and feel
+** Appearance, look and feel
 *** Menu and toolbar
 Disable all menu and toolbar to claim every little screen-space.
 
@@ -98,6 +98,7 @@ Disable annoying bell sound and startup screen..geez..
   (setq ring-bell-function 'ignore)
 #+END_SRC
 ** General settings
+Things that cannot be categorized but applies everywhere in Emacs go here.
 *** Personal information
 #+BEGIN_SRC emacs-lisp
   (setq user-full-name "Shivam Kalra"
@@ -139,18 +140,6 @@ Emacs' text.
 
 #+BEGIN_SRC emacs-lisp
   (setq save-interprogram-paste-before-kill t)
-#+END_SRC
-*** Winner mode - undo and redo windows configuration
-winner-mode lets you use =C-c <left>= and =C-c <right>= to switch
-between window configurations. This is handy when something has popped
-up a buffer that you want to look at briefly before returning to
-whatever you were working on. When you're done, press =C-c <left>=.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package winner
-    :ensure t
-    :defer t
-    :idle (winner-mode 1))
 #+END_SRC
 *** View-mode and doc-view
 Read-only viewing of files. Keybindings for paging through stuff
@@ -211,53 +200,27 @@ in a less/vim manner.
     (bind-key "C-x C-r" 'ido-recentf-open)))
 #+END_SRC
 
-*** Ibuffer mode - better buffer menu
-=Ibuffer= is an advanced replacement for BufferMenu, which lets you
-operate on buffers much in the same manner as Dired.
-#+BEGIN_SRC emacs-lisp
-  ;; ibuffer
-  (use-package ibuffer
-    :config (add-hook 'ibuffer-mode-hook (lambda () (setq truncate-lines t)))
-    :bind ("C-x C-b" . ibuffer))
-#+END_SRC
 *** Disable Yes/No
 Replacing =yes= or =no= prompt with =y= or =n=. It is much easier and less annoying.
 #+BEGIN_SRC emacs-lisp
 (defalias 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
-*** Spell check and flyspell
-I use hunspell and aspell checking spelling, ignoring words under 3 characters
-and running very quickly.
-
-First, set up some Hunspell things if applicable, falling back to aspell if
-hunspell isn't available:
+*** with-editor
+Sets up the =with-editor= package so things that invoke =$EDITOR= will use the
+current emacs if I'm already inside of emacs
 
 #+BEGIN_SRC emacs-lisp
-  ;; Standard location of personal dictionary
-  ;; (setq ispell-personal-dictionary "~/.flydict")
-  (if (file-exists-p "/usr/local/bin/hunspell")
-      (progn
-        ;; Add english-hunspell as a dictionary
-        (setq-default ispell-program-name "hunspell"
-                      ispell-dictionary "en_US"))
-    (progn (setq-default ispell-program-name "aspell")
-           (setq ispell-extra-args '("--sug-mode=normal" "--ignore=3"))))
-
-  (add-to-list 'ispell-skip-region-alist '("[^\000-\377]+"))
+(use-package with-editor
+  :init
+  (progn
+    (add-hook 'shell-mode-hook  'with-editor-export-editor)
+    (add-hook 'eshell-mode-hook 'with-editor-export-editor)))
 #+END_SRC
 
-In most non-programming modes, =M-.= can be used to spellcheck the word
-(otherwise it would jump to the definition)
-
+*** alert (notifications)
 #+BEGIN_SRC emacs-lisp
-  ;; flyspell
-  (use-package flyspell
-    :diminish "FS"
-    :config
-    (define-key flyspell-mode-map (kbd "M-n") 'flyspell-goto-next-error)
-    (define-key flyspell-mode-map (kbd "M-.") 'ispell-word))
+(use-package alert)
 #+END_SRC
-
 ** Navigation
 *** Moving to beginning of file
 #+BEGIN_SRC emacs-lisp
@@ -308,6 +271,209 @@ Navigates back to where you were editing a file next time you open it
     :init
     (setq-default save-place t)
     (setq save-place-file (expand-file-name ".places" user-emacs-directory)))
+#+END_SRC
+** Interface enhacements
+*** smooth-scrolling
+Smooth scrolling means when you hit =C-n= to go to the next line at the bottom
+of the page, instead of doing a page-down, it shifts down by a single line. The
+margin means that much space is kept between the cursor and the bottom of the
+buffer.
+
+#+BEGIN_SRC emacs-lisp
+(use-package smooth-scrolling
+  :config
+  (setq smooth-scroll-margin 4))
+#+END_SRC
+*** smartparens
+So, paredit is great, however, it doesn't work for non-lisp modes. Smartparens
+works pretty well, so I use it everywhere paredit-mode doesn't work.
+
+#+BEGIN_SRC emacs-lisp
+(use-package smartparens
+  :bind (("M-9" . sp-backward-sexp)
+         ("M-0" . sp-forward-sexp))
+  :config
+  (progn
+    (add-to-list 'sp-sexp-suffix '(json-mode regex ""))
+    (add-to-list 'sp-sexp-suffix '(es-mode regex ""))
+
+    (use-package smartparens-config)
+    (add-hook 'sh-mode-hook
+              (lambda ()
+                ;; Remove when https://github.com/Fuco1/smartparens/issues/257
+                ;; is fixed
+                (setq sp-autoescape-string-quote nil)))
+
+    ;; Remove the M-<backspace> binding that smartparens adds
+    (let ((disabled '("M-<backspace>")))
+      (setq sp-smartparens-bindings
+            (cl-remove-if (lambda (key-command)
+                            (member (car key-command) disabled))
+                          sp-smartparens-bindings)))
+
+    (define-key sp-keymap (kbd "C-(") 'sp-forward-barf-sexp)
+    (define-key sp-keymap (kbd "C-)") 'sp-forward-slurp-sexp)
+    (define-key sp-keymap (kbd "M-(") 'sp-forward-barf-sexp)
+    (define-key sp-keymap (kbd "M-)") 'sp-forward-slurp-sexp)
+    (define-key sp-keymap (kbd "C-M-f") 'sp-forward-sexp)
+    (define-key sp-keymap (kbd "C-M-b") 'sp-backward-sexp)
+    (define-key sp-keymap (kbd "C-M-f") 'sp-forward-sexp)
+    (define-key sp-keymap (kbd "C-M-b") 'sp-backward-sexp)
+    (define-key sp-keymap (kbd "C-M-d") 'sp-down-sexp)
+    (define-key sp-keymap (kbd "C-M-a") 'sp-backward-down-sexp)
+    (define-key sp-keymap (kbd "C-S-a") 'sp-beginning-of-sexp)
+    (define-key sp-keymap (kbd "C-S-d") 'sp-end-of-sexp)
+    (define-key sp-keymap (kbd "C-M-e") 'sp-up-sexp)
+    (define-key emacs-lisp-mode-map (kbd ")") 'sp-up-sexp)
+    (define-key sp-keymap (kbd "C-M-u") 'sp-backward-up-sexp)
+    (define-key sp-keymap (kbd "C-M-t") 'sp-transpose-sexp)
+    ;; (define-key sp-keymap (kbd "C-M-n") 'sp-next-sexp)
+    ;; (define-key sp-keymap (kbd "C-M-p") 'sp-previous-sexp)
+    (define-key sp-keymap (kbd "C-M-k") 'sp-kill-sexp)
+    (define-key sp-keymap (kbd "C-M-w") 'sp-copy-sexp)
+    (define-key sp-keymap (kbd "M-D") 'sp-splice-sexp)
+    (define-key sp-keymap (kbd "C-]") 'sp-select-next-thing-exchange)
+    (define-key sp-keymap (kbd "C-<left_bracket>") 'sp-select-previous-thing)
+    (define-key sp-keymap (kbd "C-M-]") 'sp-select-next-thing)
+    (define-key sp-keymap (kbd "M-F") 'sp-forward-symbol)
+    (define-key sp-keymap (kbd "M-B") 'sp-backward-symbol)
+    (define-key sp-keymap (kbd "H-t") 'sp-prefix-tag-object)
+    (define-key sp-keymap (kbd "H-p") 'sp-prefix-pair-object)
+    (define-key sp-keymap (kbd "H-s c") 'sp-convolute-sexp)
+    (define-key sp-keymap (kbd "H-s a") 'sp-absorb-sexp)
+    (define-key sp-keymap (kbd "H-s e") 'sp-emit-sexp)
+    (define-key sp-keymap (kbd "H-s p") 'sp-add-to-previous-sexp)
+    (define-key sp-keymap (kbd "H-s n") 'sp-add-to-next-sexp)
+    (define-key sp-keymap (kbd "H-s j") 'sp-join-sexp)
+    (define-key sp-keymap (kbd "H-s s") 'sp-split-sexp)
+
+    (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
+    ;; Remove '' pairing in elisp because quoting is used a ton
+    (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
+
+    (sp-with-modes '(html-mode sgml-mode)
+      (sp-local-pair "<" ">"))
+
+    (sp-with-modes sp--lisp-modes
+      (sp-local-pair "(" nil :bind "C-("))))
+
+
+(add-hook 'prog-mode-hook
+          (lambda ()
+            (smartparens-global-mode t)
+            (show-smartparens-global-mode t)))
+#+END_SRC
+*** ido-mode
+First, turn on ido-mode everywhere, and if flx-ido is installed, enable it
+everywhere as well.
+
+Ido gives really nice completion while flx-ido makes everything more flexible
+instead of rigid completions
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ido
+    :init (ido-mode t)
+    :config
+    (progn
+      (setq ido-use-virtual-buffers nil
+            ;; this setting causes weird TRAMP connections, don't set it!
+            ;;ido-enable-tramp-completion nil
+            ido-enable-flex-matching t
+            ido-auto-merge-work-directories-length nil
+            ido-create-new-buffer 'always
+            ido-use-filename-at-point 'guess
+            ido-max-prospects 10)))
+
+  (use-package flx-ido
+    :init (flx-ido-mode t)
+    :config
+    (setq ido-use-faces nil))
+
+  (use-package ido-vertical-mode
+    :init (ido-vertical-mode t))
+
+  (use-package ido-ubiquitous
+    :init (ido-ubiquitous 1))
+#+END_SRC
+
+*** undo-tree
+Undo-tree allows me to have sane undo defaults, as well as being able to
+visualize it in ascii art if needed.
+
+#+BEGIN_SRC emacs-lisp
+(use-package undo-tree
+  :idle (global-undo-tree-mode t)
+  :diminish ""
+  :config
+  (progn
+    (define-key undo-tree-map (kbd "C-x u") 'undo-tree-visualize)
+    (define-key undo-tree-map (kbd "C-/") 'undo-tree-undo)))
+#+END_SRC
+*** smex
+Smex is IDO, but for =M-x=
+
+#+BEGIN_SRC emacs-lisp
+(use-package smex
+  :bind (("M-x" . smex)
+         ("M-X" . smex-major-mode-commands)))
+#+END_SRC
+*** multiple-cursors
+Mulitple cursors is like rectangular selection/insertion but on steroids
+
+#+BEGIN_SRC emacs-lisp
+(use-package multiple-cursors
+  :bind (("C-S-c C-S-c" . mc/edit-lines)
+         ("C->" . mc/mark-next-like-this)
+         ("C-<" . mc/mark-previous-like-this)
+         ("C-c C-<" . mc/mark-all-like-this)))
+#+END_SRC
+*** anzu mode
+[[https://github.com/syohex/emacs-anzu][anzu.el]] is an Emacs port of =anzu.vim=. It provides a minor mode
+which displays current match and total matches information in the
+mode-line in various search modes.
+
+#+BEGIN_SRC emacs-lisp
+(use-package anzu
+  :bind ("M-%" . anzu-query-replace-regexp)
+  :config
+  (progn
+    (use-package thingatpt)
+    (setq anzu-mode-lighter "")
+    (set-face-attribute 'anzu-mode-line nil :foreground "yellow")))
+
+(add-hook 'prog-mode-hook (lambda () (anzu-mode t)))
+#+END_SRC
+
+Also, add a thing for yanking the entire symbol into the query while searching:
+
+#+BEGIN_SRC emacs-lisp
+(defun isearch-yank-symbol ()
+  (interactive)
+  (isearch-yank-internal (lambda () (forward-symbol 1) (point))))
+
+(define-key isearch-mode-map (kbd "C-M-w") 'isearch-yank-symbol)
+#+END_SRC
+
+*** Ibuffer mode
+=Ibuffer= is an advanced replacement for BufferMenu, which lets you
+operate on buffers much in the same manner as Dired.
+#+BEGIN_SRC emacs-lisp
+  ;; ibuffer
+  (use-package ibuffer
+    :config (add-hook 'ibuffer-mode-hook (lambda () (setq truncate-lines t)))
+    :bind ("C-x C-b" . ibuffer))
+#+END_SRC
+*** winner mode
+winner-mode lets you use =C-c <left>= and =C-c <right>= to switch
+between window configurations. This is handy when something has popped
+up a buffer that you want to look at briefly before returning to
+whatever you were working on. When you're done, press =C-c <left>=.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package winner
+    :ensure t
+    :defer t
+    :idle (winner-mode 1))
 #+END_SRC
 ** File manager and file system
 *** General settings
@@ -379,7 +545,7 @@ writable-dired mode is aawwweeeesssoooommee, it makes renames super easy.
       (define-key dired-mode-map (kbd "C-x C-q") 'wdired-change-to-wdired-mode)
       (add-hook 'dired-mode-hook #'my/dired-mode-hook)))
 #+END_SRC
-** Programming language-specific configuration
+** Programming Languages
 Configuration options for language-specific packages live here.
 *** General prog-mode hooks
 In programming mode make sure:
@@ -597,6 +763,10 @@ Setting up =elpy= and configuring all keybindings.
       (elpy-use-ipython)))
 
 #+END_SRC
+
+#+BEGIN_SRC python
+print("hello")
+#+END_SRC
 *** Javascript
 #+BEGIN_SRC emacs-lisp
 (use-package js2-mode
@@ -619,173 +789,8 @@ There's =tern= also, but I leave it turned off by default
   :init ;;(add-hook 'js-mode-hook (lambda () (tern-mode t)))
   )
 #+END_SRC
-** org-reveal (ox-reveal)
-Exporting org-mode to [[http://lab.hakim.se/reveal-js/#/][reveal.js]] presentations
-
-#+BEGIN_SRC emacs-lisp
-(use-package ox-reveal
-  :config
-  (progn
-    (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/2.5.0/")))
-#+END_SRC
-
-** alert (notifications)
-Yep. I need to actually make this work for OSX, for Linux it's no problem
-though.
-
-#+BEGIN_SRC emacs-lisp
-(use-package alert)
-#+END_SRC
-** ediff
-Ediff is fantastic for looking through diffs, a lot of these settings are taken
-from http://oremacs.com/2015/01/17/setting-up-ediff/
-
-#+BEGIN_SRC emacs-lisp
-(defun my/setup-ediff ()
-  (interactive)
-  (ediff-setup-keymap)
-  (define-key ediff-mode-map "j" #'ediff-next-difference)
-  (define-key ediff-mode-map "k" #'ediff-previous-difference))
-
-(use-package ediff
-  :init (add-hook 'ediff-mode-hook 'my/setup-ediff)
-  :config
-  (progn
-    (setq
-     ;; Always split nicely for wide screens
-     ediff-split-window-function 'split-window-horizontally
-     ;; Ignore whitespace
-     ediff-diff-options "-w")))
-#+END_SRC
-
-** smooth-scrolling
-Smooth scrolling means when you hit =C-n= to go to the next line at the bottom
-of the page, instead of doing a page-down, it shifts down by a single line. The
-margin means that much space is kept between the cursor and the bottom of the
-buffer.
-
-#+BEGIN_SRC emacs-lisp
-(use-package smooth-scrolling
-  :config
-  (setq smooth-scroll-margin 4))
-#+END_SRC
-** smartparens
-So, paredit is great, however, it doesn't work for non-lisp modes. Smartparens
-works pretty well, so I use it everywhere paredit-mode doesn't work.
-
-#+BEGIN_SRC emacs-lisp
-(use-package smartparens
-  :bind (("M-9" . sp-backward-sexp)
-         ("M-0" . sp-forward-sexp))
-  :config
-  (progn
-    (add-to-list 'sp-sexp-suffix '(json-mode regex ""))
-    (add-to-list 'sp-sexp-suffix '(es-mode regex ""))
-
-    (use-package smartparens-config)
-    (add-hook 'sh-mode-hook
-              (lambda ()
-                ;; Remove when https://github.com/Fuco1/smartparens/issues/257
-                ;; is fixed
-                (setq sp-autoescape-string-quote nil)))
-
-    ;; Remove the M-<backspace> binding that smartparens adds
-    (let ((disabled '("M-<backspace>")))
-      (setq sp-smartparens-bindings
-            (cl-remove-if (lambda (key-command)
-                            (member (car key-command) disabled))
-                          sp-smartparens-bindings)))
-
-    (define-key sp-keymap (kbd "C-(") 'sp-forward-barf-sexp)
-    (define-key sp-keymap (kbd "C-)") 'sp-forward-slurp-sexp)
-    (define-key sp-keymap (kbd "M-(") 'sp-forward-barf-sexp)
-    (define-key sp-keymap (kbd "M-)") 'sp-forward-slurp-sexp)
-    (define-key sp-keymap (kbd "C-M-f") 'sp-forward-sexp)
-    (define-key sp-keymap (kbd "C-M-b") 'sp-backward-sexp)
-    (define-key sp-keymap (kbd "C-M-f") 'sp-forward-sexp)
-    (define-key sp-keymap (kbd "C-M-b") 'sp-backward-sexp)
-    (define-key sp-keymap (kbd "C-M-d") 'sp-down-sexp)
-    (define-key sp-keymap (kbd "C-M-a") 'sp-backward-down-sexp)
-    (define-key sp-keymap (kbd "C-S-a") 'sp-beginning-of-sexp)
-    (define-key sp-keymap (kbd "C-S-d") 'sp-end-of-sexp)
-    (define-key sp-keymap (kbd "C-M-e") 'sp-up-sexp)
-    (define-key emacs-lisp-mode-map (kbd ")") 'sp-up-sexp)
-    (define-key sp-keymap (kbd "C-M-u") 'sp-backward-up-sexp)
-    (define-key sp-keymap (kbd "C-M-t") 'sp-transpose-sexp)
-    ;; (define-key sp-keymap (kbd "C-M-n") 'sp-next-sexp)
-    ;; (define-key sp-keymap (kbd "C-M-p") 'sp-previous-sexp)
-    (define-key sp-keymap (kbd "C-M-k") 'sp-kill-sexp)
-    (define-key sp-keymap (kbd "C-M-w") 'sp-copy-sexp)
-    (define-key sp-keymap (kbd "M-D") 'sp-splice-sexp)
-    (define-key sp-keymap (kbd "C-]") 'sp-select-next-thing-exchange)
-    (define-key sp-keymap (kbd "C-<left_bracket>") 'sp-select-previous-thing)
-    (define-key sp-keymap (kbd "C-M-]") 'sp-select-next-thing)
-    (define-key sp-keymap (kbd "M-F") 'sp-forward-symbol)
-    (define-key sp-keymap (kbd "M-B") 'sp-backward-symbol)
-    (define-key sp-keymap (kbd "H-t") 'sp-prefix-tag-object)
-    (define-key sp-keymap (kbd "H-p") 'sp-prefix-pair-object)
-    (define-key sp-keymap (kbd "H-s c") 'sp-convolute-sexp)
-    (define-key sp-keymap (kbd "H-s a") 'sp-absorb-sexp)
-    (define-key sp-keymap (kbd "H-s e") 'sp-emit-sexp)
-    (define-key sp-keymap (kbd "H-s p") 'sp-add-to-previous-sexp)
-    (define-key sp-keymap (kbd "H-s n") 'sp-add-to-next-sexp)
-    (define-key sp-keymap (kbd "H-s j") 'sp-join-sexp)
-    (define-key sp-keymap (kbd "H-s s") 'sp-split-sexp)
-
-    (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
-    ;; Remove '' pairing in elisp because quoting is used a ton
-    (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
-
-    (sp-with-modes '(html-mode sgml-mode)
-      (sp-local-pair "<" ">"))
-
-    (sp-with-modes sp--lisp-modes
-      (sp-local-pair "(" nil :bind "C-("))))
-
-
-(add-hook 'prog-mode-hook
-          (lambda ()
-            (smartparens-global-mode t)
-            (show-smartparens-global-mode t)))
-#+END_SRC
-** flycheck
-Pretty minimally configured, but awesome tool for most dynamic languages.
-
-#+BEGIN_SRC emacs-lisp
-  (defun my/flycheck-customize ()
-    (interactive)
-    (global-set-key (kbd "C-c C-n") 'flycheck-tip-cycle)
-    (global-set-key (kbd "C-c C-p") 'flycheck-tip-cycle-reverse))
-
-  (use-package flycheck
-    :defer t
-    :bind (("M-g M-n" . flycheck-next-error)
-           ("M-g M-p" . flycheck-previous-error)
-           ("M-g M-=" . flycheck-list-errors))
-    :idle (global-flycheck-mode)
-    :diminish "fc"
-    :config
-    (progn
-      (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
-      (use-package flycheck-color-mode-line
-        :init (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
-      (use-package flycheck-tip
-        :config (add-hook 'flycheck-mode-hook #'my/flycheck-customize))))
-
-#+END_SRC
-** with-editor
-Sets up the =with-editor= package so things that invoke =$EDITOR= will use the
-current emacs if I'm already inside of emacs
-
-#+BEGIN_SRC emacs-lisp
-(use-package with-editor
-  :init
-  (progn
-    (add-hook 'shell-mode-hook  'with-editor-export-editor)
-    (add-hook 'eshell-mode-hook 'with-editor-export-editor)))
-#+END_SRC
-
-** magit
+** Version control
+*** magit
 I use =M-g M-g= everywhere to go directly to Magit.
 
 #+BEGIN_SRC emacs-lisp
@@ -825,23 +830,7 @@ I use =M-g M-g= everywhere to go directly to Magit.
       (add-hook 'magit-auto-revert-mode-hook
                 (diminish 'magit-auto-revert-mode))))
 #+END_SRC
-
-** projectile
-Per-project navigation
-
-#+BEGIN_SRC emacs-lisp
-  (use-package projectile
-    :diminish projectile-mode
-    :init (projectile-global-mode)
-    :bind (;;("C-x f" . projectile-find-file)
-           ("C-c p s" . projectile-switch-project)
-           ("C-c p a" . projectile-ag)
-           ("C-c p g" . projectile-grep))
-    :config
-    (progn
-      (setq projectile-switch-project-action 'projectile-dired)))
-#+END_SRC
-** git-gutter
+*** gt-gutter
 Only enabled in a few modes, but quite useful, as well as the =C-x n= and =C-x
 p= bindings.
 
@@ -856,7 +845,136 @@ p= bindings.
       :init (global-git-gutter-mode t)
       :config (require 'git-gutter-fringe))
 #+END_SRC
-** company-mode (auto-complete)
+** Projectile
+Per-project navigation
+
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile
+    :diminish projectile-mode
+    :init (projectile-global-mode)
+    :bind (;;("C-x f" . projectile-find-file)
+           ("C-c p s" . projectile-switch-project)
+           ("C-c p a" . projectile-ag)
+           ("C-c p g" . projectile-grep))
+    :config
+    (progn
+      (setq projectile-switch-project-action 'projectile-dired)))
+#+END_SRC
+** Error Checking
+*** Flycheck
+Pretty minimally configured, but awesome tool for most dynamic languages.
+
+#+BEGIN_SRC emacs-lisp
+  (defun my/flycheck-customize ()
+    (interactive)
+    (global-set-key (kbd "C-c C-n") 'flycheck-tip-cycle)
+    (global-set-key (kbd "C-c C-p") 'flycheck-tip-cycle-reverse))
+
+  (use-package flycheck
+    :defer t
+    :bind (("M-g M-n" . flycheck-next-error)
+           ("M-g M-p" . flycheck-previous-error)
+           ("M-g M-=" . flycheck-list-errors))
+    :idle (global-flycheck-mode)
+    :diminish "fc"
+    :config
+    (progn
+      (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
+      (use-package flycheck-color-mode-line
+        :init (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
+      (use-package flycheck-tip
+        :config (add-hook 'flycheck-mode-hook #'my/flycheck-customize))))
+
+#+END_SRC
+*** Spell check and flyspell
+I use hunspell and aspell checking spelling, ignoring words under 3 characters
+and running very quickly.
+
+First, set up some Hunspell things if applicable, falling back to aspell if
+hunspell isn't available:
+
+#+BEGIN_SRC emacs-lisp
+  ;; Standard location of personal dictionary
+  ;; (setq ispell-personal-dictionary "~/.flydict")
+  (if (file-exists-p "/usr/local/bin/hunspell")
+      (progn
+        ;; Add english-hunspell as a dictionary
+        (setq-default ispell-program-name "hunspell"
+                      ispell-dictionary "en_US"))
+    (progn (setq-default ispell-program-name "aspell")
+           (setq ispell-extra-args '("--sug-mode=normal" "--ignore=3"))))
+
+  (add-to-list 'ispell-skip-region-alist '("[^\000-\377]+"))
+#+END_SRC
+
+In most non-programming modes, =M-.= can be used to spellcheck the word
+(otherwise it would jump to the definition)
+
+#+BEGIN_SRC emacs-lisp
+  ;; flyspell
+  (use-package flyspell
+    :diminish "FS"
+    :config
+    (define-key flyspell-mode-map (kbd "M-n") 'flyspell-goto-next-error)
+    (define-key flyspell-mode-map (kbd "M-.") 'ispell-word))
+#+END_SRC
+
+** Text modes
+*** ediff
+Ediff is fantastic for looking through diffs, a lot of these settings are taken
+from http://oremacs.com/2015/01/17/setting-up-ediff/
+
+#+BEGIN_SRC emacs-lisp
+(defun my/setup-ediff ()
+  (interactive)
+  (ediff-setup-keymap)
+  (define-key ediff-mode-map "j" #'ediff-next-difference)
+  (define-key ediff-mode-map "k" #'ediff-previous-difference))
+
+(use-package ediff
+  :init (add-hook 'ediff-mode-hook 'my/setup-ediff)
+  :config
+  (progn
+    (setq
+     ;; Always split nicely for wide screens
+     ediff-split-window-function 'split-window-horizontally
+     ;; Ignore whitespace
+     ediff-diff-options "-w")))
+#+END_SRC
+
+*** vlf (view large files)
+[[https://github.com/m00natic/vlfi][VLF]] lets me handle things like 2gb files gracefully.
+
+#+BEGIN_SRC emacs-lisp
+(use-package vlf-setup)
+#+END_SRC
+
+** org-reveal (ox-reveal)
+Exporting org-mode to [[http://lab.hakim.se/reveal-js/#/][reveal.js]] presentations
+
+#+BEGIN_SRC emacs-lisp
+(use-package ox-reveal
+  :config
+  (progn
+    (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/2.5.0/")))
+#+END_SRC
+
+** Completion frameworks
+*** Yasnippet
+#+BEGIN_SRC emacs-lisp
+  ;; yasn\ippet
+  (use-package yasnippet
+    :defer t
+    :config
+    (progn
+      (yas-global-mode)
+      (unbind-key "<tab>" yas-minor-mode-map)
+      (unbind-key "TAB" yas-minor-mode-map)
+      (bind-key "C-c y" 'yas-expand yas-minor-mode-map)
+      (custom-set-variables '(yas/prompt-functions '(my-yas/prompt))))
+    :idle (yas-reload-all))
+#+END_SRC
+*** Company mode
 Standard auto-completion configuration with company-mode
 
 #+BEGIN_SRC emacs-lisp
@@ -881,92 +999,7 @@ Standard auto-completion configuration with company-mode
 (add-hook 'prog-mode-hook 'company-mode)
 #+END_SRC
 
-** Yasnippet
-#+BEGIN_SRC emacs-lisp
-  ;; yasn\ippet
-  (use-package yasnippet
-    :defer t
-    :config
-    (progn
-      (yas-global-mode)
-      (unbind-key "<tab>" yas-minor-mode-map)
-      (unbind-key "TAB" yas-minor-mode-map)
-      (bind-key "C-c y" 'yas-expand yas-minor-mode-map)
-      (custom-set-variables '(yas/prompt-functions '(my-yas/prompt))))
-    :idle (yas-reload-all))
-#+END_SRC
-** smart-tab
-Used smart-tab to complete everywhere except for ERC, shell and mu4e.
-
-#+BEGIN_SRC emacs-lisp
-(use-package smart-tab
-  :diminish ""
-  :config
-  (progn
-    (add-to-list 'smart-tab-disabled-major-modes 'mu4e-compose-mode)
-    (add-to-list 'smart-tab-disabled-major-modes 'erc-mode)
-    (add-to-list 'smart-tab-disabled-major-modes 'shell-mode)))
-
-(add-hook 'prog-mode-hook (lambda () (global-smart-tab-mode 1)))
-#+END_SRC
-
-** undo-tree
-Undo-tree allows me to have sane undo defaults, as well as being able to
-visualize it in ascii art if needed.
-
-#+BEGIN_SRC emacs-lisp
-(use-package undo-tree
-  :idle (global-undo-tree-mode t)
-  :diminish ""
-  :config
-  (progn
-    (define-key undo-tree-map (kbd "C-x u") 'undo-tree-visualize)
-    (define-key undo-tree-map (kbd "C-/") 'undo-tree-undo)))
-#+END_SRC
-** ido-mode
-First, turn on ido-mode everywhere, and if flx-ido is installed, enable it
-everywhere as well.
-
-Ido gives really nice completion while flx-ido makes everything more flexible
-instead of rigid completions
-
-#+BEGIN_SRC emacs-lisp
-  (use-package ido
-    :init (ido-mode t)
-    :config
-    (progn
-      (setq ido-use-virtual-buffers nil
-            ;; this setting causes weird TRAMP connections, don't set it!
-            ;;ido-enable-tramp-completion nil
-            ido-enable-flex-matching t
-            ido-auto-merge-work-directories-length nil
-            ido-create-new-buffer 'always
-            ido-use-filename-at-point 'guess
-            ido-max-prospects 10)))
-
-  (use-package flx-ido
-    :init (flx-ido-mode t)
-    :config
-    (setq ido-use-faces nil))
-
-  (use-package ido-vertical-mode
-    :init (ido-vertical-mode t))
-
-  (use-package ido-ubiquitous
-    :init (ido-ubiquitous 1))
-#+END_SRC
-
-** multiple-cursors
-Mulitple cursors is like rectangular selection/insertion but on steroids
-
-#+BEGIN_SRC emacs-lisp
-(use-package multiple-cursors
-  :bind (("C-S-c C-S-c" . mc/edit-lines)
-         ("C->" . mc/mark-next-like-this)
-         ("C-<" . mc/mark-previous-like-this)
-         ("C-c C-<" . mc/mark-all-like-this)))
-#+END_SRC
-** abbrev
+*** abbrev
 I use abbrev-mode to automatically correct misspellings I usually make.
 
 #+BEGIN_SRC emacs-lisp
@@ -1009,46 +1042,19 @@ Exclude very large buffers from dabbrev
 (setq dabbrev-friend-buffer-function 'sanityinc/dabbrev-friend-buffer)
 #+end_src
 
-** smex - ido for M-x
-Smex is IDO, but for =M-x=
+*** smart-tab
+Used smart-tab to complete everywhere except for ERC, shell and mu4e.
 
 #+BEGIN_SRC emacs-lisp
-(use-package smex
-  :bind (("M-x" . smex)
-         ("M-X" . smex-major-mode-commands)))
-#+END_SRC
-** anzu mode - match information for search
-[[https://github.com/syohex/emacs-anzu][anzu.el]] is an Emacs port of =anzu.vim=. It provides a minor mode
-which displays current match and total matches information in the
-mode-line in various search modes.
-
-#+BEGIN_SRC emacs-lisp
-(use-package anzu
-  :bind ("M-%" . anzu-query-replace-regexp)
+(use-package smart-tab
+  :diminish ""
   :config
   (progn
-    (use-package thingatpt)
-    (setq anzu-mode-lighter "")
-    (set-face-attribute 'anzu-mode-line nil :foreground "yellow")))
+    (add-to-list 'smart-tab-disabled-major-modes 'mu4e-compose-mode)
+    (add-to-list 'smart-tab-disabled-major-modes 'erc-mode)
+    (add-to-list 'smart-tab-disabled-major-modes 'shell-mode)))
 
-(add-hook 'prog-mode-hook (lambda () (anzu-mode t)))
-#+END_SRC
-
-Also, add a thing for yanking the entire symbol into the query while searching:
-
-#+BEGIN_SRC emacs-lisp
-(defun isearch-yank-symbol ()
-  (interactive)
-  (isearch-yank-internal (lambda () (forward-symbol 1) (point))))
-
-(define-key isearch-mode-map (kbd "C-M-w") 'isearch-yank-symbol)
-#+END_SRC
-
-** vlf (view large files)
-[[https://github.com/m00natic/vlfi][VLF]] lets me handle things like 2gb files gracefully.
-
-#+BEGIN_SRC emacs-lisp
-(use-package vlf-setup)
+(add-hook 'prog-mode-hook (lambda () (global-smart-tab-mode 1)))
 #+END_SRC
 
 ** eww
