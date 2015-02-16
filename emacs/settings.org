@@ -120,7 +120,7 @@ with =~= add this:
   ;; delete-auto-save-files
   (setq delete-auto-save-files t)
   (setq backup-directory-alist
-        '(("." . "~/.emacs_backups")))
+        '(("." . "~/.emacs.d/backups")))
 
   ;; delete old backups silently
   (setq delete-old-versions t)
