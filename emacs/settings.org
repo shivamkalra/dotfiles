@@ -648,7 +648,8 @@ Setting up =elpy= and configuring all keybindings.
     ;; disable flycheck here
     (flycheck-mode -1)
     (sk/python-switch-pyvenv-for-project)
-    (highlight-lines-matching-regexp "^[ ]*import ipdb; ipdb.set_trace()" 'python-debugging-line-face))
+    (highlight-lines-matching-regexp "^[ ]*import ipdb; ipdb.set_trace()"
+                                     'python-debugging-line-face))
 
   (use-package elpy
     :config
