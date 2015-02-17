@@ -257,12 +257,20 @@ current emacs if I'm already inside of emacs
   (use-package windmove
     :config (windmove-default-keybindings))
 #+END_SRC
-*** Ace jump - A quick cursor jump mode
+*** Ace jump
 #+BEGIN_SRC emacs-lisp
   (use-package ace-jump-mode
     :config (eval-after-load "ace-jump-mode" '(ace-jump-mode-enable-mark-sync))
     :bind (("C-c SPC" . ace-jump-mode)
            ("C-c M-SPC" . ace-jump-line-mode)))
+#+END_SRC
+*** Ace window
+#+BEGIN_SRC emacs-lisp
+  (use-package ace-window
+    :bind (("M-p" . ace-window))
+    :config (progn
+              (setq aw-keys '(?q ?w ?e ?a ?s ?d ?z ?x ?c))
+              (setq aw-background t)))
 #+END_SRC
 *** Save place
 Navigates back to where you were editing a file next time you open it
@@ -318,6 +326,270 @@ instead of rigid completions
     :init (ido-ubiquitous 1))
 #+END_SRC
 
+*** helm
+I've recently started to use =helm= and liking it so far. Below is my
+bare minium setup for =helm=.
+#+BEGIN_SRC emacs-lisp
+  (use-package helm
+    :bind
+    (("C-M-z" . helm-resume)
+     ("C-h b" . helm-descbinds)
+     ("C-x C-o" . helm-occur)
+     ("M-y" . helm-show-kill-ring)
+     ("C-h a" . helm-apropos)
+     ("C-h m" . helm-man-woman)
+     ("M-g >" . helm-ag-this-file)
+     ("M-g ," . helm-ag-pop-stack)
+     ("M-g ." . helm-do-grep)
+     ("C-x C-i" . helm-semantic-or-imenu)
+     ("C-h t" . helm-world-time))
+    :idle (progn
+            ;;(helm-autoresize-mode 1)
+            (helm-mode 1))
+    :config
+    (progn
+      (use-package helm-config)
+      (use-package helm-files)
+      (use-package helm-grep)
+      (use-package helm-man)
+      (use-package helm-misc)
+      (use-package helm-aliases)
+      (use-package helm-elisp)
+      (use-package helm-imenu)
+      (use-package helm-semantic)
+      (use-package helm-ring)
+      (use-package helm-bookmark
+        :bind (("C-x M-b" . helm-bookmarks)))
+      (use-package helm-descbinds
+        :init (helm-descbinds-mode t))
+      (use-package helm-ag
+        :bind ("C-M-s" . helm-ag-this-file))
+
+      ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
+      ;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
+      ;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
+      (global-set-key (kbd "C-c h") 'helm-command-prefix)
+      (global-unset-key (kbd "C-x c"))
+
+      (setq helm-idle-delay 0.1
+            helm-exit-idle-delay 0.1
+            helm-input-idle-delay 0
+            helm-candidate-number-limit 500
+            helm-buffers-fuzzy-matching t
+            ;; truncate long lines in helm completion
+            helm-truncate-lines t
+            ;; may be overridden if 'ggrep' is in path (see below)
+            helm-grep-default-command
+            "grep -a -d skip %e -n%cH -e %p %f"
+            helm-grep-default-recurse-command
+            "grep -a -d recurse %e -n%cH -e %p %f"
+            ;; scroll 4 lines other window using M-<next>/M-<prior>
+            helm-scroll-amount 4
+            ;; do not display invisible candidates
+            helm-quick-update t
+            ;; be idle for this many seconds, before updating in delayed sources.
+            helm-idle-delay 0.01
+            ;; be idle for this many seconds, before updating candidate buffer
+            helm-input-idle-delay 0.01
+            ;; open helm buffer in another window
+            helm-split-window-default-side 'other
+            ;; open helm buffer inside current window, don't occupy whole other window
+            helm-split-window-in-side-p t
+            ;; limit the number of displayed canidates
+            helm-candidate-number-limit 200
+            ;; show all candidates when set to 0
+            helm-M-x-requires-pattern 0
+            ;; don't use recentf stuff in helm-ff
+            helm-ff-file-name-history-use-recentf nil
+            ;; move to end or beginning of source when reaching top or bottom
+            ;; of source
+            helm-move-to-line-cycle-in-source t
+            ;; sometimes needed in helm-buffers-list
+            ido-use-virtual-buffers 'auto
+            ;; fuzzy matching for helm-M-x
+            helm-M-x-fuzzy-match t
+            ;; fuzzy matching
+            helm-buffers-fuzzy-matching t
+            helm-semantic-fuzzy-match t
+            helm-imenu-fuzzy-match t
+            helm-completion-in-region-fuzzy-match t
+            ;; Here are the things helm-mini shows, I add `helm-source-bookmarks'
+            ;; here to the regular default list
+            helm-mini-default-sources '(helm-source-buffers-list
+                                        helm-source-recentf
+                                        helm-source-bookmarks
+                                        helm-source-buffer-not-found))
+
+      ;; List of times to show in helm-world-time
+      (setq display-time-world-list '(("Asia/Bangkok" "New Delhi")
+                                      ("Europe/London" "London")
+                                      ("Australia/Sydney" "Sydney")
+                                      ("America/Denver" "Denver")
+                                      ("EST5EDT" "Toronto")
+                                      ("UTC" "UTC")
+                                      ("Europe/Amsterdam" "Amsterdam")
+                                      ("Asia/Tokyo" "Tokyo")))
+
+      (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to do persistent action
+      (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
+      (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+
+      (define-key helm-map (kbd "C-p")   'helm-previous-line)
+      (define-key helm-map (kbd "C-n")   'helm-next-line)
+      (define-key helm-map (kbd "C-M-n") 'helm-next-source)
+      (define-key helm-map (kbd "C-M-p") 'helm-previous-source)
+      ;; The normal binding is C-c h M-g s which is insane
+      (global-set-key (kbd "C-c h g")    'helm-do-grep)
+      (global-set-key (kbd "C-c h a")    'helm-do-ag)
+
+      (define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)
+      (define-key helm-grep-mode-map (kbd "n")  'helm-grep-mode-jump-other-window-forward)
+      (define-key helm-grep-mode-map (kbd "p")  'helm-grep-mode-jump-other-window-backward)
+
+      (when (executable-find "curl")
+        (setq helm-google-suggest-use-curl-p t))
+
+      ;; ggrep is gnu grep on OSX
+      (when (executable-find "ggrep")
+        (setq helm-grep-default-command
+              "ggrep -a -d skip %e -n%cH -e %p %f"
+              helm-grep-default-recurse-command
+              "ggrep -a -d recurse %e -n%cH -e %p %f"))
+
+      (define-key helm-map (kbd "C-x 2") 'helm-select-2nd-action)
+      (define-key helm-map (kbd "C-x 3") 'helm-select-3rd-action)
+      (define-key helm-map (kbd "C-x 4") 'helm-select-4rd-action)
+
+      ;; helm-mini instead of recentf
+      (define-key 'help-command (kbd "C-f") 'helm-apropos)
+      (define-key 'help-command (kbd "r") 'helm-info-emacs)
+
+      ;; use helm to list eshell history
+      (add-hook 'eshell-mode-hook
+                #'(lambda ()
+                    (define-key eshell-mode-map (kbd "M-l")  'helm-eshell-history)))
+
+      ;; Save current position to mark ring
+      (add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
+
+      (defvar helm-httpstatus-source
+        '((name . "HTTP STATUS")
+          (candidates . (("100 Continue") ("101 Switching Protocols")
+                         ("102 Processing") ("200 OK")
+                         ("201 Created") ("202 Accepted")
+                         ("203 Non-Authoritative Information") ("204 No Content")
+                         ("205 Reset Content") ("206 Partial Content")
+                         ("207 Multi-Status") ("208 Already Reported")
+                         ("300 Multiple Choices") ("301 Moved Permanently")
+                         ("302 Found") ("303 See Other")
+                         ("304 Not Modified") ("305 Use Proxy")
+                         ("307 Temporary Redirect") ("400 Bad Request")
+                         ("401 Unauthorized") ("402 Payment Required")
+                         ("403 Forbidden") ("404 Not Found")
+                         ("405 Method Not Allowed") ("406 Not Acceptable")
+                         ("407 Proxy Authentication Required") ("408 Request Timeout")
+                         ("409 Conflict") ("410 Gone")
+                         ("411 Length Required") ("412 Precondition Failed")
+                         ("413 Request Entity Too Large")
+                         ("414 Request-URI Too Large")
+                         ("415 Unsupported Media Type")
+                         ("416 Request Range Not Satisfiable")
+                         ("417 Expectation Failed") ("418 I'm a teapot")
+                         ("422 Unprocessable Entity") ("423 Locked")
+                         ("424 Failed Dependency") ("425 No code")
+                         ("426 Upgrade Required") ("428 Precondition Required")
+                         ("429 Too Many Requests")
+                         ("431 Request Header Fields Too Large")
+                         ("449 Retry with") ("500 Internal Server Error")
+                         ("501 Not Implemented") ("502 Bad Gateway")
+                         ("503 Service Unavailable") ("504 Gateway Timeout")
+                         ("505 HTTP Version Not Supported")
+                         ("506 Variant Also Negotiates")
+                         ("507 Insufficient Storage") ("509 Bandwidth Limit Exceeded")
+                         ("510 Not Extended")
+                         ("511 Network Authentication Required")))
+          (action . message)))
+
+      (defvar helm-clj-http-source
+        '((name . "clj-http options")
+          (candidates
+           .
+           ((":accept - keyword for content type to accept")
+            (":as - output coercion: :json, :json-string-keys, :clojure, :stream, :auto or string")
+            (":basic-auth - string or vector of basic auth creds")
+            (":body - body of request")
+            (":body-encoding - encoding type for body string")
+            (":client-params - apache http client params")
+            (":coerce - when to coerce response body: :always, :unexceptional, :exceptional")
+            (":conn-timeout - timeout for connection")
+            (":connection-manager - connection pooling manager")
+            (":content-type - content-type for request")
+            (":cookie-store - CookieStore object to store/retrieve cookies")
+            (":cookies - map of cookie name to cookie map")
+            (":debug - boolean to print info to stdout")
+            (":debug-body - boolean to print body debug info to stdout")
+            (":decode-body-headers - automatically decode body headers")
+            (":decompress-body - whether to decompress body automatically")
+            (":digest-auth - vector of digest authentication")
+            (":follow-redirects - boolean whether to follow HTTP redirects")
+            (":form-params - map of form parameters to send")
+            (":headers - map of headers")
+            (":ignore-unknown-host? - whether to ignore inability to resolve host")
+            (":insecure? - boolean whether to accept invalid SSL certs")
+            (":json-opts - map of json options to be used for form params")
+            (":keystore - file path to SSL keystore")
+            (":keystore-pass - password for keystore")
+            (":keystore-type - type of SSL keystore")
+            (":length - manually specified length of body")
+            (":max-redirects - maximum number of redirects to follow")
+            (":multipart - vector of multipart options")
+            (":oauth-token - oauth token")
+            (":proxy-host - hostname of proxy server")
+            (":proxy-ignore-hosts - set of hosts to ignore for proxy")
+            (":proxy-post - port for proxy server")
+            (":query-params - map of query parameters")
+            (":raw-headers - boolean whether to return raw headers with response")
+            (":response-interceptor - function called for each redirect")
+            (":retry-handler - function to handle HTTP retries on IOException")
+            (":save-request? - boolean to return original request with response")
+            (":socket-timeout - timeout for establishing socket")
+            (":throw-entire-message? - whether to throw the entire response on errors")
+            (":throw-exceptions - boolean whether to throw exceptions on 5xx & 4xx")
+            (":trust-store - file path to trust store")
+            (":trust-store-pass - password for trust store")
+            (":trust-store-type - type of trust store")))
+          (action . message)))
+
+      (defun helm-httpstatus ()
+        (interactive)
+        (helm-other-buffer '(helm-httpstatus-source) "*helm httpstatus*"))
+
+      (defun helm-clj-http ()
+        (interactive)
+        (helm-other-buffer '(helm-clj-http-source) "*helm clj-http flags*"))
+
+      (global-set-key (kbd "C-c M-C-h") 'helm-httpstatus)
+      (global-set-key (kbd "C-c M-h") 'helm-clj-http)
+
+      (use-package helm-swoop
+        :bind (("M-i" . helm-swoop)
+               ("M-I" . helm-swoop-back-to-last-point)
+               ("C-c M-i" . helm-multi-swoop))
+        :config
+        (progn
+          ;; When doing isearch, hand the word over to helm-swoop
+          (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
+          ;; From helm-swoop to helm-multi-swoop-all
+          (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
+          ;; Save buffer when helm-multi-swoop-edit complete
+          (setq helm-multi-swoop-edit-save t
+                ;; If this value is t, split window inside the current window
+                helm-swoop-split-with-multiple-windows nil
+                ;; Split direcion. 'split-window-vertically or 'split-window-horizontally
+                helm-swoop-split-direction 'split-window-vertically
+                ;; If nil, you can slightly boost invoke speed in exchange for text color
+                helm-swoop-speed-or-color nil)))))
+#+END_SRC
 *** smex
 Smex is IDO, but for =M-x=
 
@@ -373,6 +645,88 @@ whatever you were working on. When you're done, press =C-c <left>=.
     :ensure t
     :defer t
     :idle (winner-mode 1))
+#+END_SRC
+** Window management
+*** popwin
+Popwin handles little popup windows at the bottom of the screen, which is 
+very helpful for documentation buffers and so on.
+#+BEGIN_SRC emacs-lisp
+  (use-package popwin
+    :idle (popwin-mode 1))
+  (defvar popwin:special-display-config-backup popwin:special-display-config)
+  (setq display-buffer-function 'popwin:display-buffer)
+
+  ;; basic
+  (push '("*Help*" :stick t :noselect t) popwin:special-display-config)
+  (push '("*helm world time*" :stick t :noselect t) popwin:special-display-config)
+  (push '("*Pp Eval Output*" :stick t) popwin:special-display-config)
+  (push '("*Helm Swoop*" :stick t :noselect t) popwin:special-display-config)
+
+  ;; magit
+  (push '("*magit-process*" :stick t) popwin:special-display-config)
+
+  ;; quickrun
+  (push '("*quickrun*" :stick t) popwin:special-display-config)
+
+  ;; dictionaly
+  (push '("*dict*" :stick t) popwin:special-display-config)
+  (push '("*sdic*" :stick t) popwin:special-display-config)
+
+  ;; popwin for slime
+  (push '(slime-repl-mode :stick t) popwin:special-display-config)
+
+  ;; man
+  (push '(Man-mode :stick t :height 20) popwin:special-display-config)
+
+  ;; Elisp
+  (push '("*ielm*" :stick t) popwin:special-display-config)
+  (push '("*eshell pop*" :stick t) popwin:special-display-config)
+
+  ;; pry
+  (push '(inf-ruby-mode :stick t :height 20) popwin:special-display-config)
+
+  ;; python
+  (push '("*Python*"   :stick t) popwin:special-display-config)
+  (push '("*Python Help*" :stick t :height 20) popwin:special-display-config)
+  (push '("*jedi:doc*" :stick t :noselect t) popwin:special-display-config)
+
+  ;; Haskell
+  (push '("*haskell*" :stick t) popwin:special-display-config)
+  (push '("*GHC Info*") popwin:special-display-config)
+
+  ;; sgit
+  (push '("*sgit*" :position right :width 0.5 :stick t)
+        popwin:special-display-config)
+
+  ;; git-gutter
+  (push '("*git-gutter:diff*" :width 0.5 :stick t)
+        popwin:special-display-config)
+
+  ;; direx
+  (push '(direx:direx-mode :position left :width 40 :dedicated t)
+        popwin:special-display-config)
+
+  (push '("*Occur*" :stick t) popwin:special-display-config)
+
+  ;; prodigy
+  (push '("*prodigy*" :stick t) popwin:special-display-config)
+
+  ;; malabar-mode
+  (push '("*Malabar Compilation*" :stick t :height 30)
+        popwin:special-display-config)
+
+  ;; org-mode
+  (push '("*Org tags*" :stick t :height 30)
+        popwin:special-display-config)
+
+  ;; Completions
+  (push '("*Completions*" :stick t :noselect t) popwin:special-display-config)
+
+  ;; ggtags
+  (push '("*ggtags-global*" :stick t :noselect t :height 30) popwin:special-display-config)
+
+  ;; async shell commands
+  (push '("*Async Shell Command*" :stick t) popwin:special-display-config)
 #+END_SRC
 ** File manager and file system
 *** General settings
@@ -470,8 +824,10 @@ selected region.
     (font-lock-add-keywords
      nil '(("\\<\\(FIXME\\|TODO\\)\\>"
             1 '((:foreground "#d7a3ad") (:weight bold)) t)))
+    ;; enables some modes for programming
     (linum-mode t)
     (hl-line-mode t)
+    (company-mode t)
     ;; key bind
     (define-key prog-mode-map (kbd "C-c c") 'sk/comment-or-uncomment-region-or-line))
 
@@ -833,20 +1189,21 @@ I use =M-g M-g= everywhere to go directly to Magit.
       (add-hook 'magit-auto-revert-mode-hook
                 (diminish 'magit-auto-revert-mode))))
 #+END_SRC
-*** gt-gutter
+*** git-gutter
 Only enabled in a few modes, but quite useful, as well as the =C-x n= and =C-x
 p= bindings.
 
 #+BEGIN_SRC emacs-lisp
-    (use-package git-gutter
-      :bind (("C-x =" . git-gutter:popup-hunk)
-             ("C-x p" . git-gutter:previous-hunk)
-             ("C-x v s" . git-gutter:stage-hunk)
-             ("C-x v r" . git-gutter:revert-hunk)
-             ("C-x v =" . git-gutter:popup-hunk))
-      :diminish
-      :init (global-git-gutter-mode t)
-      :config (require 'git-gutter-fringe))
+  (use-package git-gutter
+    :bind (("C-x =" . git-gutter:popup-hunk)
+           ("C-x p" . git-gutter:previous-hunk)
+           ("C-x n" . git-gutter:next-hunk)
+           ("C-x v s" . git-gutter:stage-hunk)
+           ("C-x v r" . git-gutter:revert-hunk)
+           ("C-x v =" . git-gutter:popup-hunk))
+    :diminish
+    :init (global-git-gutter-mode t)
+    :config (require 'git-gutter-fringe))
 #+END_SRC
 ** Projectile
 Per-project navigation
@@ -981,25 +1338,23 @@ Exporting org-mode to [[http://lab.hakim.se/reveal-js/#/][reveal.js]] presentati
 Standard auto-completion configuration with company-mode
 
 #+BEGIN_SRC emacs-lisp
-(use-package company
-  :diminish " C"
-  :bind ("C-." . company-complete)
-  :config
-  (progn
-    (setq company-idle-delay 0.2
-          ;; min prefix of 2 chars
-          company-minimum-prefix-length 2
-          company-selection-wrap-around t
-          company-show-numbers t
-          company-dabbrev-downcase nil
-          company-transformers '(company-sort-by-occurrence))
-    (bind-keys :map company-active-map
-               ("C-n" . company-select-next)
-               ("C-p" . company-select-previous)
-               ("C-d" . company-show-doc-buffer)
-               ("<tab>" . company-complete))))
-
-(add-hook 'prog-mode-hook 'company-mode)
+  (use-package company
+    :diminish " C"
+    :bind ("C-." . company-complete)
+    :config
+    (progn
+      (setq company-idle-delay 0.2
+            ;; min prefix of 2 chars
+            company-minimum-prefix-length 2
+            company-selection-wrap-around t
+            company-show-numbers t
+            company-dabbrev-downcase nil
+            company-transformers '(company-sort-by-occurrence))
+      (bind-keys :map company-active-map
+                 ("C-n" . company-select-next)
+                 ("C-p" . company-select-previous)
+                 ("C-d" . company-show-doc-buffer)
+                 ("<tab>" . company-complete))))
 #+END_SRC
 
 *** abbrev
