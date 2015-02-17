@@ -61,8 +61,8 @@ Disable all menu and toolbar to claim every little screen-space.
      (when (fboundp mode) (funcall mode -1))))
 #+END_SRC
 *** Theme
-I use =solarized-dark= theme when Emacs is as X window application
-whereas =wombat= on my =rxvt= terminal.
+I use =solarized-dark= theme for graphics Emacs and  =wombat= on my  =rxvt= 
+terminal. I tend to use Emacs more in X system than terminal.
 
 #+BEGIN_SRC emacs-lisp
   ;; solarized-dark on window-system
