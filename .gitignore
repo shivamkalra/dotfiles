@@ -4,6 +4,11 @@ emacs/elpa
 emacs/eshell
 emacs/**/*.eld
 emacs/**/*.dat
+emacs/.places
+emacs/eww-bookmarks
+emacs/savehist
+emacs/settings.el
+emacs/settings.html
 mpd/log
 mpd/pid
 mpd/sticker.sql
