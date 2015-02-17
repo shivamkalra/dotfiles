@@ -99,10 +99,11 @@ Disable annoying bell sound and startup screen..geez..
 #+END_SRC
 ** General settings
 Things that cannot be categorized but applies everywhere in Emacs go here.
-*** Personal information
+*** Global information
 #+BEGIN_SRC emacs-lisp
   (setq user-full-name "Shivam Kalra"
-        user-mail-address "shivam.s.kalra@gmail.com")
+        user-mail-address "shivam.s.kalra@gmail.com"
+        emacs-configuration-directory (file-name-directory  (file-truename "~/.emacs.d/init.el")))
 #+END_SRC
 *** Backups and temporary files
 By default Emacs saves backups of files in working directory. To
@@ -1097,8 +1098,8 @@ Various methods I call interactively for things.
 Byte-compile startup stuff.
 
 #+BEGIN_SRC emacs-lisp
-(defun sk/byte-recompile-init-files ()
-  "Recompile all of the startup files"
-  (interactive)
-  (byte-recompile-directory "~/.emacs.d" 0))
+  (defun sk/byte-recompile-init-files ()
+    "Recompile all of the startup files"
+    (interactive)
+    (byte-recompile-directory emacs-configuration-directory 0))
 #+END_SRC
