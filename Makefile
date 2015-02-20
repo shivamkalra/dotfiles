@@ -8,7 +8,7 @@ install: install-emacs install-bash install-git \
 
 install-emacs:
 	rm -rf ~/.emacs.d
-	ln -s `pwd`/emacs ~/.emacs.d
+	ln -s `pwd`/emacs.d ~/.emacs.d
 
 install-bash:
 	rm -f ~/.bashrc ~/.bash_profile
