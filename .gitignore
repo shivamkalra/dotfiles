@@ -1,14 +1,4 @@
-emacs/**/*.elc
-emacs/auto-save-list
-emacs/elpa
-emacs/eshell
-emacs/**/*.eld
-emacs/**/*.dat
-emacs/.places
-emacs/eww-bookmarks
-emacs/savehist
-emacs/settings.el
-emacs/settings.html
+emacs.d/
 mpd/log
 mpd/pid
 mpd/sticker.sql
