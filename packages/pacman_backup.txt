@@ -1,6 +1,5 @@
 acpi
 acpid
-acroread
 alsa-firmware
 alsa-oss
 alsa-utils
@@ -32,6 +31,7 @@ cronie
 cryptsetup
 cups
 curlftpfs
+cython
 ddrescue
 deadbeef
 device-mapper
@@ -39,6 +39,7 @@ dhcpcd
 dialog
 diffutils
 dnsutils
+dos2unix
 dosfstools
 dropbox
 e2fsprogs
@@ -48,6 +49,7 @@ erlang
 evince
 fakeroot
 fbida
+fceux
 ffmpeg
 ffmpegthumbnailer
 figlet
@@ -64,8 +66,7 @@ fprintd
 freetype2-infinality-ultimate
 galculator
 gawk
-gcc
-gcc-libs
+gcc-fortran
 gettext
 gimp
 git
@@ -91,7 +92,6 @@ htop
 ibfonts-meta-extended
 icedtea-web
 inetutils
-intel-dri
 iproute2
 iputils
 irssi
@@ -104,19 +104,10 @@ lib32-freetype2-infinality-ultimate
 libev
 libgit2
 libmad
-libreoffice-still-base
-libreoffice-still-calc
-libreoffice-still-common
-libreoffice-still-draw
-libreoffice-still-gnome
-libreoffice-still-impress
-libreoffice-still-kde4
-libreoffice-still-math
-libreoffice-still-postgresql-connector
+libreoffice-still
 libreoffice-still-sdk
-libreoffice-still-sdk-doc
-libreoffice-still-writer
 libtool
+libvncserver
 licenses
 lighttpd
 linux
@@ -150,6 +141,7 @@ netctl
 network-manager-applet
 networkmanager
 networkmanager-vpnc
+nmap
 nodejs
 notify-osd
 ntfs-3g
@@ -186,6 +178,7 @@ python-pip
 python-scipy
 python2-dbus
 python2-pillow
+python2-pip
 python2-pyqt4
 python2-reportlab
 python2-xdg
@@ -195,7 +188,6 @@ reiserfsprogs
 remmina
 rsync
 ruby
-rxvt-unicode
 s-nail
 sane
 scapy
@@ -223,7 +215,9 @@ tint2
 tk
 tmux
 tomcat8
+tor
 transmission-gtk
+tree
 ttf-bitstream-vera
 ttf-inconsolata
 ttf-indic-otf
@@ -236,10 +230,13 @@ usbutils
 util-linux
 vi
 vim
+vinagre
 virtualbox-guest-utils
+vlc
 volumeicon
 wget
 which
+wkhtmltopdf
 x11vnc
 xclip
 xdg-user-dirs
@@ -250,17 +247,13 @@ xf86-input-mouse
 xf86-input-synaptics
 xf86-input-void
 xf86-video-ark
-xf86-video-ast
 xf86-video-ati
-xf86-video-cirrus
 xf86-video-dummy
 xf86-video-fbdev
 xf86-video-glint
 xf86-video-i128
 xf86-video-intel
 xf86-video-mach64
-xf86-video-mga
-xf86-video-modesetting
 xf86-video-neomagic
 xf86-video-nouveau
 xf86-video-nv
@@ -271,7 +264,6 @@ xf86-video-siliconmotion
 xf86-video-sis
 xf86-video-tdfx
 xf86-video-trident
-xf86-video-v4l
 xf86-video-vesa
 xf86-video-voodoo
 xfsprogs
