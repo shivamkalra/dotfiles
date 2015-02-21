@@ -9,6 +9,7 @@ backup:
 
 restore:
 	@echo restoring packages ...
+	sudo cp pacman.conf /etc/pacman.conf
 	sudo pacman -S --needed `cat $(PACMAN_FILE)`
 	cat $(YAOURT_FILE) | xargs yaourt -S --noconfirm --needed
 
