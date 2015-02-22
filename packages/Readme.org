@@ -1,6 +1,6 @@
 #+TITLE:   Backup and restore packages
 * Backup packages
-To backup both =pacman= and =yaourt=:
+To backup both *pacman* and *yaourt*:
 
 #+BEGIN_SRC shell
 make backup
