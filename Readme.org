@@ -1,2 +1,1 @@
-#+TITLE Dot files
-* Dot files
+#+TITLE:   Dot files
