@@ -4,7 +4,7 @@ To backup both =pacman= and =yaourt=:
 
 #+BEGIN_SRC shell
 make backup
-#END_SRC
+#+END_SRC
 
 * Restore packages
 To restore packages:
@@ -14,7 +14,7 @@ To restore packages:
 make pacman-init
 # then run restore
 make restore
-#END_SRC
+#+END_SRC
 
 * References
 1. [https://wiki.archlinux.org/index.php/pacman-key]
