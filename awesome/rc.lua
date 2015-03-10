@@ -86,7 +86,7 @@ end
 -- {{{ Tags
 -- Define a tag table which hold all screen tags.
 tags = {
-   names = { "www", "emacs", "term", "work", "im", "doc", 7, 8, 9 },
+   names = { "www", "emacs", "term", "work", "im", "read", 7, 8, 9 },
    layout = {
       layouts[2], layouts[2], layouts[3], layouts[2], layouts[2],
       layouts[2], layouts[2], layouts[1], layouts[1]
