@@ -143,4 +143,4 @@ export WORKON_HOME=$HOME/.virtualenvs
 source /usr/bin/virtualenvwrapper_lazy.sh
 
 #Adding path Variables
-export PATH=$PATH:${HOME}/bin:${HOME}/.cask/bin/
+export PATH=$PATH:${HOME}/bin:${HOME}/.cask/bin/:${HOME}/.cabal/bin

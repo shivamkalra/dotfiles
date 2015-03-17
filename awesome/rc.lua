@@ -14,6 +14,17 @@ local battery = require("battery")
 local volume = require("volume")
 local sexec = awful.util.spawn_with_shell
 
+-- {{{ Utility functions
+function run_if_not_running(prg)
+   local handle = io.popen(string.format("ps aux | grep [%s]%s",
+				  string.sub(prg, 1, 1),
+				  string.sub(prg, 2)))
+   local result = handle:read("*a")
+   handle:close()
+   if result == nil or result == '' then
+      awful.util.spawn(prg)
+   end
+end
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -281,11 +292,17 @@ globalkeys = awful.util.table.join(
    end),
    -- open emacs Mod + e
    awful.key({ modkey, }, "e",
-      function (c) awful.util.spawn("emacs") end),
-   -- open chrome with Mod + c
-   awful.key({ modkey, }, "c",
-      function (c) awful.util.spawn("chromium") end),
-
+      function (c)
+	 run_if_not_running("emacs")
+	 -- well this is debatable which screen emacs exists?
+	 awful.tag.viewonly(tags[mouse.screen][2])
+   end),
+   -- open chrome with Mod + b
+   awful.key({ modkey, }, "b",
+      function (c)
+	 run_if_not_running("chromium")
+	 awful.tag.viewonly(tags[mouse.screen][1])
+   end),
    awful.key({ modkey, "Shift" }, "Right",
       function (c)
 	 local curidx = awful.tag.getidx()
@@ -462,7 +479,9 @@ awful.rules.rules = {
    { rule = { class = "URxvt" },
      properties = { size_hints_honor = false } },
    { rule = { class = "Emacs", instance = "emacs" },
-     properties = { size_hints_honor = false } },
+     -- to have small border between speedbar and emacs
+     properties = { size_hints_honor = false, border_width = 1,
+		    tag = tags[mouse.screen][2]} },
    { rule = { class = "pinentry" },
      properties = { floating = true } },
    { rule = { class = "gimp" },
