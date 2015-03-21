@@ -100,7 +100,7 @@ alias p="cd ${HOME}/projects/"
 alias b="cd ${HOME}/books/"
 
 #git
-alias git-root='cd "$(git rev-parse --show-toplevel)"'
+alias r='cd "$(git rev-parse --show-toplevel)"'
 alias ~="cd ~"
 alias mkvirtualenv2="mkvirtualenv --python=/bin/python2"
 
