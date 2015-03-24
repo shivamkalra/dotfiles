@@ -84,6 +84,7 @@ export MC_SKIN=$HOME/.mc/solarized.ini
 # Aliases                                                      #
 ################################################################
 alias e="TERM=rxvt /bin/emacs -nw"
+alias ex="exit"
 alias ls='ls -h --color=auto'
 alias h='cd'
 alias cim='vim'
