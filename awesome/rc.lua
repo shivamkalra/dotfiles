@@ -15,7 +15,7 @@ local volume = require("volume")
 local sexec = awful.util.spawn_with_shell
 
 -- {{{ Utility functions
-function run_if_not_running(prg)
+function run_if_not_exist_in_tag(prg, tagidx)
    local handle = io.popen(string.format("ps aux | grep [%s]%s",
 				  string.sub(prg, 1, 1),
 				  string.sub(prg, 2)))
@@ -24,6 +24,8 @@ function run_if_not_running(prg)
    if result == nil or result == '' then
       awful.util.spawn(prg)
    end
+   -- assumption: user trying open in focused screen
+   awful.tag.viewonly(tags[mouse.screen][tagidx])
 end
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -293,15 +295,13 @@ globalkeys = awful.util.table.join(
    -- open emacs Mod + e
    awful.key({ modkey, }, "e",
       function (c)
-	 run_if_not_running("emacs")
+	 run_if_not_exist_in_tag("emacs", 2)
 	 -- well this is debatable which screen emacs exists?
-	 awful.tag.viewonly(tags[mouse.screen][2])
    end),
    -- open chrome with Mod + b
    awful.key({ modkey, }, "b",
       function (c)
-	 run_if_not_running("chromium")
-	 awful.tag.viewonly(tags[mouse.screen][1])
+	 run_if_not_exist_in_tag("chromium", 1)
    end),
    awful.key({ modkey, "Shift" }, "Right",
       function (c)
