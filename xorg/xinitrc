@@ -17,6 +17,9 @@ xbindkeys &
 # start openbox
 #/usr/bin/openbox-session > ~/.openbox_startup.log 2>&1
 
+# xrdb
+/uxr/bin/xrdb ~/.Xdefaulls
+
 # MPD daemon start
 /bin/mpd
 

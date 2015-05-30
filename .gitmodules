@@ -4,3 +4,12 @@
 [submodule "xorg/dircolors-solarized"]
 	path = xorg/dircolors-solarized
 	url = https://github.com/seebi/dircolors-solarized.git
+[submodule "zsh/oh-my-zsh"]
+	path = zsh/oh-my-zsh
+	url = git@github.com:shivamkalra/oh-my-zsh.git
+[submodule "awesome-themes"]
+	path = awesome-themes
+	url = git@github.com:mikar/awesome-themes.git
+[submodule "zsh/zgen"]
+	path = zsh/zgen
+	url = git@github.com:tarjoilija/zgen.git
