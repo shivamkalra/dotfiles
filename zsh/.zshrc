@@ -41,7 +41,7 @@ if ! zgen saved; then
     zgen load tarruda/zsh-autosuggestions
 
     # Load theme
-    zgen oh-my-zsh themes/ys
+    zgen oh-my-zsh themes/gallois
 
     # Tell antigen that you're done
     zgen save
