@@ -4,8 +4,16 @@ cowsay "Hello Cow" 2> /dev/null
 # add path
 export PATH="/usr/bin":${HOME}/bin:${HOME}/.cask/bin/:${HOME}/.cabal/bin:${HOME}/go/bin:$PATH
 
+#Python Environment
+export WORKON_HOME=$HOME/.virtualenvs
+source /usr/bin/virtualenvwrapper_lazy.sh
+
 # load zgen
 source "${ZDOTDIR}/zgen/zgen.zsh"
+
+# settings for zsh auto-completion
+export AUTOSUGGESTION_HIGHLIGHT_COLOR="fg=6"
+export AUTOSUGGESTION_ACCEPT_RIGHT_ARROW=1
 
 # check if there's no init script
 if ! zgen saved; then
@@ -19,14 +27,16 @@ if ! zgen saved; then
     zgen oh-my-zsh plugins/git
     zgen oh-my-zsh plugins/pip
     zgen oh-my-zsh plugins/python
+    zgen oh-my-zsh plugins/extract
     zgen oh-my-zsh plugins/virtualenv
     zgen oh-my-zsh plugins/command-not-found
-    zgen oh-my-zsh plugins/history-substring-search
+    zgen oh-my-zsh plugins/virtualenvwrapper
 
     # Github plugins
+    zgen zsh-users/history-substring-search﻿
     zgen load rupa/z
-    zgen load zsh-users/zsh-syntax-highlighting
-    zgen load zsh-users/zsh-completions src
+    zgen load jimmijj/zsh-syntax-highlighting
+    zgen load tarruda/zsh-autosuggestions
     zgen load kennethreitz/autoenv
     zgen load tarruda/zsh-autosuggestions
 

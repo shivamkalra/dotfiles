@@ -23,7 +23,7 @@ URxvt*saveLines: 10000
 URxvt*buffered: true
 URxvt*hold: false
 !URxvt*font:*-*-fixed-medium-r-normal--12-110-*-*-*-*-iso8859-1
-URxvt.font: xft:Fantasque Sans Mono:weight=medium:pixelsize=14
+URxvt.font: xft:Source Code Pro:style=Regular:pixelsize=12
 URxvt*dynamicColors: on
 URxvt*boldColors: on
 !URxvt*letterSpace: -1
