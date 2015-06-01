@@ -469,7 +469,7 @@ root.keys(globalkeys)
 awful.rules.rules = {
   -- All clients will match this rule.
   { rule = { },
-    properties = { border_width = beautiful.border_width,
+    properties = { border_width = 1,
                    border_color = beautiful.border_normal,
                    focus = awful.client.focus.filter,
                    keys = clientkeys,
@@ -480,7 +480,7 @@ awful.rules.rules = {
     properties = { size_hints_honor = false } },
   { rule = { class = "Emacs", instance = "emacs" },
     -- to have small border between speedbar and emacs
-    properties = { size_hints_honor = false, border_width = 1,
+    properties = { size_hints_honor = false,
                    tag = tags[mouse.screen][2]} },
   { rule = { class = "pinentry" },
     properties = { floating = true } },
