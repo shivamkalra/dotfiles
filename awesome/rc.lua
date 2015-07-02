@@ -61,6 +61,8 @@ end
 beautiful.init( awful.util.getdir("config") ..
                   "/themes/awesome-solarized/dark/theme.lua" )
 theme.wallpaper = awful.util.getdir("config") .. "/themes/wallpaper.jpg"
+awesome.font = "Source Code Pro 9"
+theme.font = "Source Code Pro 9"
 
 -- This is used later as the default terminal and editor to run.
 terminal = "urxvt"

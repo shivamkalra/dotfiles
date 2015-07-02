@@ -23,7 +23,7 @@ URxvt*saveLines: 10000
 URxvt*buffered: true
 URxvt*hold: false
 !URxvt*font:*-*-fixed-medium-r-normal--12-110-*-*-*-*-iso8859-1
-URxvt.font: xft:Inconsolata:style=Medium:pixelsize=13
+URxvt.font: xft:Inconsolata:style=Medium:pixelsize=14
 URxvt*dynamicColors: on
 URxvt*boldColors: on
 !URxvt*letterSpace: -1

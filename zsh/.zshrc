@@ -2,11 +2,11 @@
 cowsay "Hello Cow" 2> /dev/null
 
 # add path
-export PATH="/usr/bin":${HOME}/bin:${HOME}/.cask/bin/:${HOME}/.cabal/bin:${HOME}/go/bin:$PATH
+export PATH="/usr/bin":${HOME}/bin:${HOME}/.cask/bin/:${HOME}/.cabal/bin:${HOME}/go/bin:${HOME}/src/omnisharp-server/OmniSharp/bin/Debug:$PATH
 
 #Python Environment
 export WORKON_HOME=$HOME/.virtualenvs
-source /usr/bin/virtualenvwrapper_lazy.sh
+#source /usr/bin/virtualenvwrapper_lazy.sh
 
 # load zgen
 source "${ZDOTDIR}/zgen/zgen.zsh"
@@ -14,7 +14,6 @@ source "${ZDOTDIR}/zgen/zgen.zsh"
 # settings for zsh auto-completion
 export AUTOSUGGESTION_HIGHLIGHT_COLOR="fg=6"
 export AUTOSUGGESTION_ACCEPT_RIGHT_ARROW=1
-
 # check if there's no init script
 if ! zgen saved; then
     echo "Creating a zgen save"
