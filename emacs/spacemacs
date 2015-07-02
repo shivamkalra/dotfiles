@@ -34,7 +34,8 @@
      perspectives
      lua
      python
-     erc
+     (erc :variables
+          erc-sasl-server-regexp-list '("irc\\.freenode\\.net"))
      emacs-lisp
      shell-script
      javascript
@@ -161,6 +162,7 @@ before layers configuration."
    dotspacemacs-default-package-repository nil
    )
   ;; User initialization goes here
+  ;; for erc-sasl
   )
 
 (defun dotspacemacs/config ()
