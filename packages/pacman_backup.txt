@@ -273,6 +273,7 @@ usb_modeswitch
 usbutils
 util-linux
 vi
+vicious
 vim
 vinagre
 virtualbox-guest-utils

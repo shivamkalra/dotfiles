@@ -34,5 +34,5 @@ function battery_info(adapter)
     battery = "A/C"
     percent = ""
   end
-  return ' b'..battery..percent.." "
+  return 'Bat: '..battery..percent..' '
 end

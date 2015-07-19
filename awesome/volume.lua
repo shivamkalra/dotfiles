@@ -18,5 +18,5 @@ function volume_info()
    end
 
    volume = volume:gsub("^%s*(.-)%s*$", "%1")
-   return 'v'..volume
+   return 'Vol: '..volume..' | '
 end

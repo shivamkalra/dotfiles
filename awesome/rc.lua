@@ -3,6 +3,7 @@ local gears = require("gears")
 local awful = require("awful")
 awful.rules = require("awful.rules")
 require("awful.autofocus")
+vicious = require("vicious")
 -- Widget and layout library
 local wibox = require("wibox")
 -- Theme handling library
@@ -141,10 +142,42 @@ menubar.utils.terminal = terminal
 -- {{{ Wibox
 -- Create a textclock widget
 textclock_widget = awful.widget.textclock(" %a %b %d, %I:%M %p ", 60)
+
 -- create a battery widget
 battery_widget = wibox.widget.textbox()
+
 -- create a volume widget
 volume_widget = wibox.widget.textbox()
+
+-- Network Widget
+local netwidget = wibox.widget.textbox()
+vicious.register(netwidget, vicious.widgets.net, '<span color="#CC9393">⇩${wlp3s0 down_kb}</span> <span color="#7F9F7F">${wlp3s0 up_kb}⇧</span> | ', 1)
+
+-- Memory Widget
+local memwidget = wibox.widget.textbox()
+vicious.cache(vicious.widgets.mem)
+vicious.register(memwidget, vicious.widgets.mem, "RAM: $1%, $2 MB | ", 9)
+
+-- Weather widget
+local weatherwidget = wibox.widget.textbox()
+weather_t = awful.tooltip({ objects = { weatherwidget },})
+
+vicious.register(weatherwidget, vicious.widgets.weather,
+                 function (widget, args)
+                   weather_t:set_text("City: " .. args["{city}"]
+                                        .."\nWind: " .. args["{windkmh}"]
+                                        .. "km/h " .. args["{wind}"] .. "\nSky: "
+                                        .. args["{sky}"] .. "\nHumidity: "
+                                        .. args["{humid}"] .. "%")
+                   return " Weather: " .. args["{tempc}"] .. "°C | "
+                 end, 300, "CYYZ")
+
+-- CPU Widget
+-- Initialize widget
+-- Initialize widget
+local cpuwidget = wibox.widget.textbox()
+vicious.cache(vicious.widgets.cpu)
+vicious.register(cpuwidget, vicious.widgets.cpu, "CPU: $1% | ")
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -234,11 +267,16 @@ for s = 1, screen.count() do
 
   -- Widgets that are aligned to the right
   local right_layout = wibox.layout.fixed.horizontal()
-  if s == 1 then right_layout:add(wibox.widget.systray()) end
-  right_layout:add(textclock_widget)
+  right_layout:add(weatherwidget)
+  right_layout:add(memwidget)
+  right_layout:add(netwidget)
+  right_layout:add(cpuwidget)
   right_layout:add(volume_widget)
   right_layout:add(battery_widget)
+  if s == 1 then right_layout:add(wibox.widget.systray()) end
+  right_layout:add(textclock_widget)
   right_layout:add(mylayoutbox[s])
+
 
   -- Now bring it all together (with the tasklist in the middle)
   local layout = wibox.layout.align.horizontal()
@@ -600,6 +638,6 @@ function run_once(prg)
   end
   sexec("pgrep -u $USER -x " .. prg .. " || (" .. prg .. ")")
 end
-run_once("clipit")
+run_once("clipit -n --no-icon")
 run_once("nm-applet")
 -- }}}
