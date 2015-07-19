@@ -2,7 +2,7 @@
 mpc clear > /dev/null
 
 # fetch url
-url=$(python $HOME/bin/_raw/yplay.py $@)
+url=$(/bin/python $HOME/bin/_raw/yplay.py $@)
 
 # play
 mpc add $(youtube-dl --prefer-insecure -g -f140 $url) > /dev/null

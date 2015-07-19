@@ -14,6 +14,7 @@ source "${ZDOTDIR}/zgen/zgen.zsh"
 # settings for zsh auto-completion
 export AUTOSUGGESTION_HIGHLIGHT_COLOR="fg=6"
 export AUTOSUGGESTION_ACCEPT_RIGHT_ARROW=1
+
 # check if there's no init script
 if ! zgen saved; then
     echo "Creating a zgen save"

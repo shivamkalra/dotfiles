@@ -112,6 +112,7 @@ for s = 1, screen.count() do
   -- Each screen has its own tag table.
   tags[s] = awful.tag(tags.names, s, tags.layout)
 end
+
 -- }}}
 
 -- {{{ Menu
@@ -139,7 +140,7 @@ menubar.utils.terminal = terminal
 
 -- {{{ Wibox
 -- Create a textclock widget
-mytextclock = awful.widget.textclock(" %a %b %d, %I:%M %p ", 60)
+textclock_widget = awful.widget.textclock(" %a %b %d, %I:%M %p ", 60)
 -- create a battery widget
 battery_widget = wibox.widget.textbox()
 -- create a volume widget
@@ -234,7 +235,7 @@ for s = 1, screen.count() do
   -- Widgets that are aligned to the right
   local right_layout = wibox.layout.fixed.horizontal()
   if s == 1 then right_layout:add(wibox.widget.systray()) end
-  right_layout:add(mytextclock)
+  right_layout:add(textclock_widget)
   right_layout:add(volume_widget)
   right_layout:add(battery_widget)
   right_layout:add(mylayoutbox[s])
