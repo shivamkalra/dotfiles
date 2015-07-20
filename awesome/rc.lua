@@ -156,7 +156,7 @@ vicious.register(netwidget, vicious.widgets.net, '<span color="#CC9393">⇩${wlp
 -- Memory Widget
 local memwidget = wibox.widget.textbox()
 vicious.cache(vicious.widgets.mem)
-vicious.register(memwidget, vicious.widgets.mem, "RAM: $1%, $2 MB | ", 9)
+vicious.register(memwidget, vicious.widgets.mem, "Ram: $1%, $2 MB | ", 9)
 
 -- Weather widget
 local weatherwidget = wibox.widget.textbox()
@@ -176,8 +176,23 @@ vicious.register(weatherwidget, vicious.widgets.weather,
 -- Initialize widget
 -- Initialize widget
 local cpuwidget = wibox.widget.textbox()
-vicious.cache(vicious.widgets.cpu)
-vicious.register(cpuwidget, vicious.widgets.cpu, "CPU: $1% | ")
+cpuwidget_t = awful.tooltip({ objects = { cpuwidget },})
+-- Initialize widgets
+vicious.register(cpuwidget, vicious.widgets.cpu,
+                 function (widget, args)
+                   local text
+                   -- list all cpu cores
+                   for i=1,#args do
+                     -- append to list
+                     if i >= 2 then text = text .. 'Cpu ' .. i-1 .. ': ' .. args[i] .. '%\n'
+                     else text = 'Overall: ' .. args[i] .. '%\n' end
+                   end
+
+                   cpuwidget_t:set_text(text)
+                   return 'Cpu: ' .. args[1] .. '% | '
+                 end, 7)
+-- Register buttons
+cpuwidget:buttons( awful.button({ }, 1, function () awful.util.spawn(terminal .. " -e htop") end) )
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -257,7 +272,7 @@ for s = 1, screen.count() do
                                           currenttags, mytasklist.buttons)
 
   -- Create the wibox
-  mywibox[s] = awful.wibox({ position = "top", screen = s, height = 20 })
+  mywibox[s] = awful.wibox({ position = "top", screen = s, height = 16 })
 
   -- Widgets that are aligned to the left
   local left_layout = wibox.layout.fixed.horizontal()

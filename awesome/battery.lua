@@ -4,6 +4,8 @@
 
 local naughty = require("naughty")
 local beautiful = require("beautiful")
+local os = require("os")
+local last_notify_time = nil
 
 function battery_info(adapter)
   local fcur = io.open("/sys/class/power_supply/"..adapter.."/energy_now")
@@ -20,19 +22,22 @@ function battery_info(adapter)
   if sta:match("Charging") then
     percent = "%"
   elseif sta:match("Discharging") then
-    percent = "D"
+    percent = '%⇩'
     if tonumber(battery) < 15 then
-      naughty.notify({ title    = "Battery Warning"
-             , text     = "Battery low!".."  "..battery..percent.."  ".."left!"
+      if last_notify_time == nil or os.difftime(os.time(), last_notify_time) > 8 then
+        naughty.notify({ title    = "Battery Warning"
+             , text     = "Battery low!".."  "..battery.."%  ".."left!"
              , timeout  = 5
              , position = "top_right"
              , fg       = beautiful.fg_focus
              , bg       = beautiful.bg_focus
-      })
+        })
+        last_notify_time = os.time()
+      end
     end
   else
     battery = "A/C"
     percent = ""
   end
-  return 'Bat: '..battery..percent..' '
+  return 'Batt: '..battery..percent..' '
 end
