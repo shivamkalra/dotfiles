@@ -142,12 +142,14 @@ menubar.utils.terminal = terminal
 -- {{{ Wibox
 -- Create a textclock widget
 textclock_widget = awful.widget.textclock(" %a %b %d, %I:%M %p ", 60)
-
+weather_t = awful.tooltip({ objects = { weatherwidget },})
 -- create a battery widget
 battery_widget = wibox.widget.textbox()
 
 -- create a volume widget
 volume_widget = wibox.widget.textbox()
+-- Register buttons
+volume_widget:buttons( awful.button({ }, 1, function () awful.util.spawn("pavucontrol") end) )
 
 -- Network Widget
 local netwidget = wibox.widget.textbox()
@@ -171,6 +173,11 @@ vicious.register(weatherwidget, vicious.widgets.weather,
                                         .. args["{humid}"] .. "%")
                    return " Weather: " .. args["{tempc}"] .. "°C | "
                  end, 300, "CYYZ")
+weatherwidget:buttons(awful.button({ }, 1,
+                    function ()
+                      awful.util.spawn(terminal .. ' -e sh -c "wego | less"')
+                    end
+))
 
 -- CPU Widget
 -- Initialize widget
@@ -192,7 +199,11 @@ vicious.register(cpuwidget, vicious.widgets.cpu,
                    return 'Cpu: ' .. args[1] .. '% | '
                  end, 7)
 -- Register buttons
-cpuwidget:buttons( awful.button({ }, 1, function () awful.util.spawn(terminal .. " -e htop") end) )
+cpuwidget:buttons(awful.button({ }, 1,
+                    function ()
+                      awful.util.spawn(terminal .. " -e htop")
+                    end
+))
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -302,6 +313,7 @@ for s = 1, screen.count() do
 
   mywibox[s]:set_widget(layout)
 end
+
 -- }}}
 
 -- {{{ Mouse bindings
@@ -542,6 +554,19 @@ awful.rules.rules = {
     properties = { floating = true } },
   { rule = { class = "gimp" },
     properties = { floating = true } },
+  { rule = { name = "htop" },
+    properties = { floating = true } ,
+    callback = function(c)
+      awful.client.moveresize(0, 0, 100, 100, c)
+    end
+  },
+  { rule = { class = "Pavucontrol" },
+    properties = { floating = true } ,
+    callback = function (c)
+      awful.placement.centered(c,nil)
+    end
+  },
+
   -- Set Firefox to always map on tags number 2 of screen 1.
   -- { rule = { class = "Firefox" },
   -- properties = { tag = tags[1][2] } },
