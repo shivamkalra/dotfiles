@@ -15,6 +15,10 @@ local battery = require("battery")
 local volume = require("volume")
 local sexec = awful.util.spawn_with_shell
 
+-- {{{ Globals
+widget_pid_t = {}
+-- }}}
+
 -- {{{ Utility functions
 function run_if_not_exist_in_tag(prg, tagidx)
   local handle = io.popen(string.format("ps aux | grep [%s]%s",
@@ -157,26 +161,33 @@ vicious.register(netwidget, vicious.widgets.net, '<span color="#CC9393">⇩${wlp
 
 -- Memory Widget
 local memwidget = wibox.widget.textbox()
-vicious.cache(vicious.widgets.mem)
+-- vicious.cache(vicious.widgets.mem)
 vicious.register(memwidget, vicious.widgets.mem, "Ram: $1%, $2 MB | ", 9)
 
 -- Weather widget
 local weatherwidget = wibox.widget.textbox()
 weather_t = awful.tooltip({ objects = { weatherwidget },})
 
-vicious.register(weatherwidget, vicious.widgets.weather,
-                 function (widget, args)
-                   weather_t:set_text("City: " .. args["{city}"]
-                                        .."\nWind: " .. args["{windkmh}"]
-                                        .. "km/h " .. args["{wind}"] .. "\nSky: "
-                                        .. args["{sky}"] .. "\nHumidity: "
-                                        .. args["{humid}"] .. "%")
-                   return " Weather: " .. args["{tempc}"] .. "°C | "
-                 end, 300, "CYYZ")
-weatherwidget:buttons(awful.button({ }, 1,
-                    function ()
-                      awful.util.spawn(terminal .. ' -e sh -c "wego | less"')
-                    end
+vicious.register(
+  weatherwidget,
+  vicious.widgets.weather,
+  function (widget, args)
+    weather_t:set_text("City: " .. args["{city}"]
+                         .."\nWind: " .. args["{windkmh}"]
+                         .. "km/h " .. args["{wind}"] .. "\nSky: "
+                         .. args["{sky}"] .. "\nHumidity: "
+                         .. args["{humid}"] .. "%")
+    return " Weather: " .. args["{tempc}"] .. "°C | "
+  end, 300, "CYYZ")
+weatherwidget:buttons(
+  awful.button({ }, 1,
+    function ()
+      local pid = awful.util.spawn(terminal .. ' -e sh -c "wego 5 | less"')
+      widget_pid_t[pid] = function (c)
+        awful.client.floating.set(c, true)
+        awful.client.moveresize(0, 0, 400, 550, c)
+      end
+    end
 ))
 
 -- CPU Widget
@@ -185,24 +196,33 @@ weatherwidget:buttons(awful.button({ }, 1,
 local cpuwidget = wibox.widget.textbox()
 cpuwidget_t = awful.tooltip({ objects = { cpuwidget },})
 -- Initialize widgets
-vicious.register(cpuwidget, vicious.widgets.cpu,
-                 function (widget, args)
-                   local text
-                   -- list all cpu cores
-                   for i=1,#args do
-                     -- append to list
-                     if i >= 2 then text = text .. 'Cpu ' .. i-1 .. ': ' .. args[i] .. '%\n'
-                     else text = 'Overall: ' .. args[i] .. '%\n' end
-                   end
+vicious.register(
+  cpuwidget,
+  vicious.widgets.cpu,
+  function (widget, args)
+    local text
+    -- list all cpu cores
+    for i=1,#args do
+      -- append to list
+      if i >= 2 then text = text .. 'Cpu ' .. i-1 .. ': ' .. args[i] .. '%\n'
+      else text = 'Overall: ' .. args[i] .. '%\n' end
+    end
 
-                   cpuwidget_t:set_text(text)
-                   return 'Cpu: ' .. args[1] .. '% | '
-                 end, 7)
+    cpuwidget_t:set_text(text)
+    return 'Cpu: ' .. args[1] .. '% | '
+  end, 7)
+
 -- Register buttons
-cpuwidget:buttons(awful.button({ }, 1,
-                    function ()
-                      awful.util.spawn(terminal .. " -e htop")
-                    end
+cpuwidget:buttons(
+  awful.button({},
+    1,
+    function ()
+      local pid = awful.util.spawn(terminal .. " -e htop")
+      widget_pid_t[pid] = function (c)
+        awful.client.floating.set(c, true)
+        awful.client.moveresize(0, 0, 100, 100, c)
+      end
+    end
 ))
 
 -- Create a wibox for each screen and add it
@@ -366,6 +386,11 @@ globalkeys = awful.util.table.join(
       run_if_not_exist_in_tag("emacs", 2)
       -- well this is debatable which screen emacs exists?
   end),
+  awful.key({ modkey, "Shift"}, "z",
+    function (c)
+      awful.util.spawn("anamnesis -b")
+    end
+  ),
   -- open chrome with Mod + b
   awful.key({ modkey, }, "b",
     function (c)
@@ -538,10 +563,15 @@ awful.rules.rules = {
   -- All clients will match this rule.
   { rule = { },
     properties = { border_width = 1,
-                   border_color = beautiful.border_normal,
                    focus = awful.client.focus.filter,
                    keys = clientkeys,
-                   buttons = clientbuttons } },
+                   buttons = clientbuttons },
+    callback = function(c)
+      if widget_pid_t[c.pid] ~= nil then
+        widget_pid_t[c.pid](c)
+      end
+    end
+  },
   { rule = { class = "MPlayer" },
     properties = { floating = true } },
   { rule = { class = "URxvt" },
@@ -554,18 +584,15 @@ awful.rules.rules = {
     properties = { floating = true } },
   { rule = { class = "gimp" },
     properties = { floating = true } },
-  { rule = { name = "htop" },
-    properties = { floating = true } ,
-    callback = function(c)
-      awful.client.moveresize(0, 0, 100, 100, c)
-    end
-  },
   { rule = { class = "Pavucontrol" },
     properties = { floating = true } ,
     callback = function (c)
       awful.placement.centered(c,nil)
     end
   },
+  { rule = { class = "Anamnesis" },
+    properties = { floating = true }
+  }
 
   -- Set Firefox to always map on tags number 2 of screen 1.
   -- { rule = { class = "Firefox" },
@@ -678,6 +705,6 @@ function run_once(prg)
   end
   sexec("pgrep -u $USER -x " .. prg .. " || (" .. prg .. ")")
 end
-run_once("clipit -n --no-icon")
+run_once("anamnesis --start")
 run_once("nm-applet")
 -- }}}
