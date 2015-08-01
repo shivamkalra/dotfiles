@@ -49,13 +49,35 @@ if ! zgen saved; then
 fi
 
 # Enable autosuggestions automatically.
-zle-line-init() {
+zle-line-init()
+{
     zle autosuggest-start
 }
 zle -N zle-line-init
 
 # ls colors
 eval `dircolors ~/.lscolors`
+
+################################################################
+# Functions                                                    #
+################################################################
+function isnumber
+{
+    re='^[0-9]+$'
+    if ! [[ $1 =~ $re ]] ; then
+        return 1
+    fi
+    return 0
+}
+function killgrep
+{
+    skype_pid=`pgrep $1`
+    isnumber $skype_pid
+    if [ "$?" -eq 0 ] ; then
+        kill -9 $skype_pid
+    fi
+}
+
 
 ################################################################
 # Aliases                                                      #

@@ -185,7 +185,7 @@ weatherwidget:buttons(
       local pid = awful.util.spawn(terminal .. ' -e sh -c "wego 5 | less"')
       widget_pid_t[pid] = function (c)
         awful.client.floating.set(c, true)
-        awful.client.moveresize(0, 0, 400, 550, c)
+        awful.client.moveresize(400, 0, 400, 550, c)
       end
     end
 ))
