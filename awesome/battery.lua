@@ -29,8 +29,6 @@ function battery_info(adapter)
              , text     = "Battery low!".."  "..battery.."%  ".."left!"
              , timeout  = 5
              , position = "top_right"
-             , fg       = beautiful.fg_focus
-             , bg       = beautiful.bg_focus
         })
         last_notify_time = os.time()
       end
@@ -39,5 +37,5 @@ function battery_info(adapter)
     battery = "A/C"
     percent = ""
   end
-  return 'Batt: '..battery..percent..' '
+  return ' <span font="monospace 9" color=\"#6A8587\">BAT:</span><span font=\"monospace 9\">'..battery..percent..'</span> '
 end

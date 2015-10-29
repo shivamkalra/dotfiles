@@ -32,6 +32,7 @@ function run_if_not_exist_in_tag(prg, tagidx)
   -- assumption: user trying open in focused screen
   awful.tag.viewonly(tags[mouse.screen][tagidx])
 end
+
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -66,11 +67,12 @@ end
 beautiful.init( awful.util.getdir("config") ..
                   "/themes/awesome-solarized/dark/theme.lua" )
 theme.wallpaper = awful.util.getdir("config") .. "/themes/wallpaper.jpg"
-awesome.font = "Source Code Pro 9"
-theme.font = "Source Code Pro 9"
+awesome.font = "monospace 9"
+theme.font = "monospace 9"
 
+local email = require("email")
 -- This is used later as the default terminal and editor to run.
-terminal = "urxvt"
+terminal = "termite"
 editor = os.getenv("EDITOR") or "emacs"
 editor_cmd = terminal .. " -e " .. editor
 
@@ -106,7 +108,7 @@ end
 -- {{{ Tags
 -- Define a tag table which hold all screen tags.
 tags = {
-  names = { "www", "emacs", "term", "work", "im", "read", 7, 8, 9 },
+  names = { "web", "emacs", "term", "work", "im", "read", 7, 8, 9 },
   layout = {
     layouts[2], layouts[2], layouts[3], layouts[2], layouts[2],
     layouts[2], layouts[2], layouts[1], layouts[1]
@@ -145,24 +147,48 @@ menubar.utils.terminal = terminal
 
 -- {{{ Wibox
 -- Create a textclock widget
-textclock_widget = awful.widget.textclock(" %a %b %d, %I:%M %p ", 60)
+textclock_widget = awful.widget.textclock("<span font=\"monospace 9\"> %a %b %d, %I:%M %p</span> ", 60)
 weather_t = awful.tooltip({ objects = { weatherwidget },})
 -- create a battery widget
 battery_widget = wibox.widget.textbox()
+email_widget = wibox.widget.textbox()
 
 -- create a volume widget
 volume_widget = wibox.widget.textbox()
 -- Register buttons
 volume_widget:buttons( awful.button({ }, 1, function () awful.util.spawn("pavucontrol") end) )
+volume_widget:set_markup(volume_info("amixer sget Master"))
 
+local wsep = "<span font=\"monospace 9\" color=\"#6A8587\">|</span>"
 -- Network Widget
 local netwidget = wibox.widget.textbox()
-vicious.register(netwidget, vicious.widgets.net, '<span color="#CC9393">⇩${wlp3s0 down_kb}</span> <span color="#7F9F7F">${wlp3s0 up_kb}⇧</span> | ', 1)
+vicious.register(netwidget, vicious.widgets.net, ' <span font="monospace 9" color="#CC9393">D:${wlp3s0 down_kb}</span> <span font="monospace 9" color="#7F9F7F">U:${wlp3s0 up_kb}</span> ' .. wsep .. ' ', 1)
+netwidget:buttons(
+  awful.button({},
+    1,
+    function ()
+      local pid = awful.util.spawn(terminal .. " -e netmonitor")
+      widget_pid_t[pid] = function (c)
+        awful.client.moveresize(0, 0, 200, 200, c)
+      end
+    end
+))
+
 
 -- Memory Widget
 local memwidget = wibox.widget.textbox()
 -- vicious.cache(vicious.widgets.mem)
-vicious.register(memwidget, vicious.widgets.mem, "Ram: $1%, $2 MB | ", 9)
+vicious.register(memwidget, vicious.widgets.mem, "<span font=\"monospace 9\" color=\"#6A8587\">MEM:</span><span font=\"monospace 9\">$1% ($2 MB)</span> ", 9)
+memwidget:buttons(
+  awful.button({},
+    1,
+    function ()
+      local pid = awful.util.spawn(terminal .. " -e vtop -t becca")
+      widget_pid_t[pid] = function (c)
+        awful.client.moveresize(0, 0, 200, 200, c)
+      end
+    end
+))
 
 -- Weather widget
 local weatherwidget = wibox.widget.textbox()
@@ -177,14 +203,13 @@ vicious.register(
                          .. "km/h " .. args["{wind}"] .. "\nSky: "
                          .. args["{sky}"] .. "\nHumidity: "
                          .. args["{humid}"] .. "%")
-    return " Weather: " .. args["{tempc}"] .. "°C | "
+    return "  <span font=\"monospace 9\" color=\"#6A8587\">TEMP:</span><span font=\"monospace 9\"> " .. args["{tempc}"] .. "°C</span> " .. wsep .. " "
   end, 300, "CYYZ")
 weatherwidget:buttons(
   awful.button({ }, 1,
     function ()
       local pid = awful.util.spawn(terminal .. ' -e sh -c "wego 5 | less"')
       widget_pid_t[pid] = function (c)
-        awful.client.floating.set(c, true)
         awful.client.moveresize(400, 0, 400, 550, c)
       end
     end
@@ -209,7 +234,7 @@ vicious.register(
     end
 
     cpuwidget_t:set_text(text)
-    return 'Cpu: ' .. args[1] .. '% | '
+    return '<span font=\"monospace 9\" color=\"#6A8587\">CPU:</span><span font=\"monospace 9\">' .. args[1] .. '%</span> ' .. wsep
   end, 7)
 
 -- Register buttons
@@ -219,7 +244,6 @@ cpuwidget:buttons(
     function ()
       local pid = awful.util.spawn(terminal .. " -e htop")
       widget_pid_t[pid] = function (c)
-        awful.client.floating.set(c, true)
         awful.client.moveresize(0, 0, 100, 100, c)
       end
     end
@@ -313,10 +337,11 @@ for s = 1, screen.count() do
 
   -- Widgets that are aligned to the right
   local right_layout = wibox.layout.fixed.horizontal()
+  right_layout:add(email_widget)
   right_layout:add(weatherwidget)
   right_layout:add(memwidget)
-  right_layout:add(netwidget)
   right_layout:add(cpuwidget)
+    right_layout:add(netwidget)
   right_layout:add(volume_widget)
   right_layout:add(battery_widget)
   if s == 1 then right_layout:add(wibox.widget.systray()) end
@@ -349,16 +374,15 @@ root.buttons(
 globalkeys = awful.util.table.join(
   awful.key({ }, "XF86AudioRaiseVolume",
     function ()
-      awful.util.spawn("amixer set Master 1%+", false)
-      volume_widget:set_text(volume_info())
+      volume_widget:set_markup(volume_info("amixer set Master 1%+"))
   end),
+  awful.key({modkey,            }, "F1",     function () awful.screen.focus(2) end),
+  awful.key({modkey,            }, "F2",     function () awful.screen.focus(1) end),
   awful.key({ }, "XF86AudioLowerVolume", function ()
-      awful.util.spawn("amixer set Master 1%-", false)
-      volume_widget:set_text(volume_info())
+      volume_widget:set_markup(volume_info("amixer set Master 1%-"))
   end),
   awful.key({ }, "XF86AudioMute", function ()
-      awful.util.spawn("amixer set Master toggle", false)
-      volume_widget:set_text(volume_info())
+      volume_widget:set_markup(volume_info("pactl set-sink-mute 0 toggle; amixer"))
   end),
   -- awful.key({ modkey }, "Home", function()
   --    awful.util.spawn("xbacklight -inc 5", false)
@@ -368,27 +392,49 @@ globalkeys = awful.util.table.join(
   -- end),
   awful.key({ modkey, }, "Left", awful.tag.viewprev ),
   awful.key({ modkey, }, "Right", awful.tag.viewnext ),
-  awful.key({ modkey, }, "Escape", awful.tag.history.restore),
-  -- Tag movements
-  awful.key({ modkey, "Shift" }, "Left",
+  awful.key({ modkey, "Mod1"  }, "Right", function () awful.tag.incmwfact( 0.01)   end),
+  awful.key({ modkey, "Mod1"  }, "Left",  function () awful.tag.incmwfact(-0.01)   end),
+  awful.key({ modkey, "Shift" }, "Down",  function () awful.client.incwfact( 0.01) end),
+  awful.key({ modkey, "Shift" }, "Up",    function () awful.client.incwfact(-0.01) end),
+  awful.key({ modkey, "Shift"   }, "Left",
     function (c)
       local curidx = awful.tag.getidx()
       if curidx == 1 then
-        awful.client.movetotag(tags[client.focus.screen]
-                               [#tags[client.focus.screen]])
+        awful.client.movetotag(tags[math.floor(mouse.screen)][9])
       else
-        awful.client.movetotag(tags[client.focus.screen][curidx - 1])
+         awful.client.movetotag(tags[mouse.screen][curidx - 1])
       end
   end),
+  awful.key({ modkey, "Shift"   }, "Right",
+    function (c)
+      local curidx = awful.tag.getidx()
+      if curidx == 9 then
+        awful.client.movetotag(tags[client.focus.screen][1])
+      else
+        awful.client.movetotag(tags[client.focus.screen][curidx + 1])
+      end
+  end),
+  awful.key({ modkey, }, "Escape", awful.tag.history.restore),
+  -- Tag movements
   -- open emacs Mod + e
   awful.key({ modkey, }, "e",
     function (c)
       run_if_not_exist_in_tag("emacs", 2)
       -- well this is debatable which screen emacs exists?
   end),
+  -- youtube search
+  awful.key({ modkey, }, "y",
+    function (c) sexec('yts') end),
+  awful.key({ modkey, "Shift" }, "y",
+    function (c)
+      naughty.notify({ text = 'Sending link to mpv...',
+                       timeout=2,
+                       screen=mouse.screen})
+      sexec('mpv $(xclip -o)')
+  end),
   awful.key({ modkey, "Shift"}, "z",
     function (c)
-      awful.util.spawn("anamnesis -b")
+      awful.util.spawn("clipmenu")
     end
   ),
   -- open chrome with Mod + b
@@ -396,10 +442,19 @@ globalkeys = awful.util.table.join(
     function (c)
       run_if_not_exist_in_tag("chromium", 1)
   end),
-  awful.key({ modkey, "Shift" }, "Right",
+  awful.key({ modkey, "Shift"   }, ",",
     function (c)
       local curidx = awful.tag.getidx()
-      if curidx == #tags[client.focus.screen] then
+      if curidx == 1 then
+        awful.client.movetotag(tags[client.focus.screen][9])
+      else
+        awful.client.movetotag(tags[client.focus.screen][curidx - 1])
+      end
+  end),
+  awful.key({ modkey, "Shift"   }, ".",
+    function (c)
+      local curidx = awful.tag.getidx()
+      if curidx == 9 then
         awful.client.movetotag(tags[client.focus.screen][1])
       else
         awful.client.movetotag(tags[client.focus.screen][curidx + 1])
@@ -479,7 +534,7 @@ globalkeys = awful.util.table.join(
         awful.util.getdir("cache") .. "/history_eval")
   end),
   -- Menubar
-  awful.key({ modkey }, "p", function() menubar.show() end)
+  awful.key({ modkey }, "p", function() sexec('dmenu-frecency') end)
 )
 
 clientkeys = awful.util.table.join(
@@ -560,26 +615,37 @@ root.keys(globalkeys)
 
 -- {{{ Rules
 awful.rules.rules = {
-  -- All clients will match this rule.
-  { rule = { },
+    { rule = { },
     properties = { border_width = 1,
                    focus = awful.client.focus.filter,
                    keys = clientkeys,
                    buttons = clientbuttons },
     callback = function(c)
       if widget_pid_t[c.pid] ~= nil then
+        c.ontop = true
+        c.floating = true
         widget_pid_t[c.pid](c)
       end
     end
   },
+  -- All clients will match this rule.
   { rule = { class = "MPlayer" },
     properties = { floating = true } },
   { rule = { class = "URxvt" },
-    properties = { size_hints_honor = false } },
+    properties = { size_hints_honor = true },
+    callback = function(c, t)
+      local stagname = c:tags()[1].name
+      if widget_pid_t[c.pid] == nil and stagname ~= "term" then
+        c.ontop = true
+        awful.client.floating.set(c, true)
+        awful.client.moveresize( 20,  20, -40, -40)
+        awful.placement.centered(c,nil)
+      end
+    end
+  },
   { rule = { class = "Emacs", instance = "emacs" },
     -- to have small border between speedbar and emacs
-    properties = { size_hints_honor = false,
-                   tag = tags[mouse.screen][2]} },
+    properties = { size_hints_honor = false}},
   { rule = { class = "pinentry" },
     properties = { floating = true } },
   { rule = { class = "gimp" },
@@ -589,11 +655,7 @@ awful.rules.rules = {
     callback = function (c)
       awful.placement.centered(c,nil)
     end
-  },
-  { rule = { class = "Anamnesis" },
-    properties = { floating = true }
   }
-
   -- Set Firefox to always map on tags number 2 of screen 1.
   -- { rule = { class = "Firefox" },
   -- properties = { tag = tags[1][2] } },
@@ -607,12 +669,29 @@ battery_widget_timer = timer({timeout = 1})
 battery_widget_timer:connect_signal(
   "timeout",
   function()
-    battery_widget:set_text(battery_info("BAT0"))
+    battery_widget:set_markup(battery_info("BAT0"))
 end)
 
 battery_widget_timer:start()
-battery_widget:set_text(battery_info("BAT0"))
-volume_widget:set_text(volume_info())
+battery_widget:set_markup(battery_info("BAT0"))
+
+email_widget_timer = timer({timeout = 30})
+email_widget_timer:connect_signal(
+  "timeout",
+  function()
+    email_widget:set_markup(email_info())
+end)
+
+email_widget_timer:start()
+email_widget:set_markup(email_info())
+email_widget:buttons(
+  awful.button({},
+    1,
+    function ()
+      --awful.tag.viewonly(tags[1][2])
+      awful.util.spawn('unreademails')
+    end
+))
 
 client.connect_signal(
   "manage",
@@ -708,6 +787,3 @@ function run_once(prg)
   end
   sexec("pgrep -u $USER -x " .. prg .. " || (" .. prg .. ")")
 end
-run_once("anamnesis --start")
-run_once("nm-applet")
--- }}}

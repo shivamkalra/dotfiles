@@ -1,88 +1,67 @@
-# Print some cows
-cowsay "Hello Cow" 2> /dev/null
-
-# add path
-export PATH="/usr/bin":${HOME}/bin:${HOME}/.cask/bin/:${HOME}/.cabal/bin:${HOME}/go/bin:${HOME}/src/omnisharp-server/OmniSharp/bin/Debug:$PATH
-
-#Python Environment
-export WORKON_HOME=$HOME/.virtualenvs
-#source /usr/bin/virtualenvwrapper_lazy.sh
-
-# load zgen
-source "${ZDOTDIR}/zgen/zgen.zsh"
-
-# settings for zsh auto-completion
-export AUTOSUGGESTION_HIGHLIGHT_COLOR="fg=6"
-export AUTOSUGGESTION_ACCEPT_RIGHT_ARROW=1
-
-# check if there's no init script
-if ! zgen saved; then
-    echo "Creating a zgen save"
-
-    # Load robbyrussell's oh-my-zsh's library
-    zgen oh-my-zsh
-
-    # Plugins from robbyrussell's oh-my-zsh
-    zgen oh-my-zsh plugins/tmux
-    zgen oh-my-zsh plugins/git
-    zgen oh-my-zsh plugins/pip
-    zgen oh-my-zsh plugins/python
-    zgen oh-my-zsh plugins/extract
-    zgen oh-my-zsh plugins/virtualenv
-    zgen oh-my-zsh plugins/command-not-found
-    zgen oh-my-zsh plugins/virtualenvwrapper
-
-    # Github plugins
-    zgen zsh-users/history-substring-search﻿
-    zgen load rupa/z
-    zgen load jimmijj/zsh-syntax-highlighting
-    zgen load tarruda/zsh-autosuggestions
-    zgen load kennethreitz/autoenv
-    zgen load tarruda/zsh-autosuggestions
-
-    # Load theme
-    zgen oh-my-zsh themes/gallois
-
-    # Tell antigen that you're done
-    zgen save
-
-fi
-
-# Enable autosuggestions automatically.
-zle-line-init()
-{
-    zle autosuggest-start
-}
-zle -N zle-line-init
-
-# ls colors
+# Created by newuser for 5.1.1
 eval `dircolors ~/.lscolors`
 
-################################################################
-# Functions                                                    #
-################################################################
-function isnumber
-{
-    re='^[0-9]+$'
-    if ! [[ $1 =~ $re ]] ; then
-        return 1
+function zathura-tabbed {
+    wid=`wmctrl -lx | grep "tabbed.tabbed" | cut -d' ' -f1`
+    if [[ -z "${wid// }" ]]; then
+        wid=$(tabbed -d);
     fi
-    return 0
-}
-function killgrep
-{
-    skype_pid=`pgrep $1`
-    isnumber $skype_pid
-    if [ "$?" -eq 0 ] ; then
-        kill -9 $skype_pid
-    fi
+    echo "$wid"
+    /bin/zathura -e "$wid" "$@"
 }
 
+export WORKON_HOME=~/.virtualenvs
+source /usr/bin/virtualenvwrapper.sh
+
+export GOPATH=${HOME}/.gopath
+export PATH=${HOME}/.local/bin:${HOME}/.cabal/bin:${HOME}/.gopath/bin:${HOME}/bin:$PATH
+eval "$(fasd --init auto)"
+
+# settings for zsh auto-completion
+export AUTOSUGGESTION_HIGHLIGHT_COLOR="fg=10"
+export AUTOSUGGESTION_ACCEPT_RIGHT_ARROW=1
+BULLETTRAIN_VIRTUALENV_PREFIX="!"
+
+. /etc/profile.d/fzf.zsh
+
+source ${HOME}/.antigen.zsh
+
+antigen-use oh-my-zsh
+
+# define the plugins
+antigen bundle zsh-users/zsh-completions src
+antigen-bundle Peeja/ctrl-zsh
+antigen-bundle fasd
+antigen-bundle systemd
+antigen-bundle ssh-agent
+antigen-bundle extract
+antigen-bundle zsh-users/zsh-syntax-highlighting
+antigen-bundle zsh-users/zsh-history-substring-search
+antigen bundle mafredri/zsh-async
+antigen theme https://github.com/caiogondim/bullet-train-oh-my-zsh-theme bullet-train
+
+antigen apply
+
+# bind UP and DOWN arrow keys
+zmodload zsh/terminfo
+bindkey "$terminfo[kcuu1]" history-substring-search-up
+bindkey "$terminfo[kcud1]" history-substring-search-down
+
+# bind UP and DOWN arrow keys (compatibility fallback
+# for Ubuntu 12.04, Fedora 21, and MacOSX 10.9 users)
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+
+# bind P and N for EMACS mode
+bindkey -M emacs '^P' history-substring-search-up
+bindkey -M emacs '^N' history-substring-search-down
 
 ################################################################
 # Aliases                                                      #
 ################################################################
 alias l="ls"
+alias powerperf="sudo cpupower frequency-set -g performance"
+alias powersave="sudo cpupower frequency-set -g powersave"
 alias config="cd ${XDG_CONFIG_HOME}"
 alias damn='$(thefuck $(fc -ln -1))'
 alias e="exit"
@@ -95,3 +74,5 @@ alias rmf="rm -f"
 alias p="cd ${HOME}/projects/"
 alias b="cd ${HOME}/books/"
 alias r='cd "$(git rev-parse --show-toplevel)"'
+alias moff="xrandr --output VGA1 --off; echo 'awesome.restart()' | awesome-client;"
+alias mon="xrandr --output VGA1 --left-of LVDS1 --mode 1920x1080; sleep 1s && echo 'awesome.restart()' | awesome-client;"

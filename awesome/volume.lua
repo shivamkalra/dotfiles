@@ -1,5 +1,5 @@
-function volume_info()
-   local fd = io.popen("amixer sget Master")
+function volume_info(cmd)
+   local fd = io.popen(cmd)
    local status = fd:read("*all")
    fd:close()
 
@@ -18,5 +18,5 @@ function volume_info()
    end
 
    volume = volume:gsub("^%s*(.-)%s*$", "%1")
-   return 'Vol: '..volume..' | '
+   return '<span font="monospace 9" color=\"#6A8587\">VOL:</span><span font="monospace 9">'..volume..'</span> '
 end
