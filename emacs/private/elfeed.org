@@ -1,0 +1,33 @@
+* Blogs                                                         :elfeed:blog:
+
+*** Emacs                                                         :emacs:dev:
+
+**** http://nullprogram.com/feed/
+
+**** http://emacshorrors.com/feed.atom
+
+**** http://emacsredux.com/atom.xml
+
+**** http://pragmaticemacs.com/feed/
+
+**** http://endlessparentheses.com/atom.xml
+
+**** http://sachachua.com/blog/feed/
+
+
+* Comics                                                       :comic:elfeed:
+
+** Software Development                                                 :dev:
+
+*** http://xkcd.com/rss.xml
+
+*** http://www.commitstrip.com/en/feed/
+
+
+
+* Reddit                                                      :reddit:elfeed:
+
+** https://www.reddit.com/r/awesomewm/.rss                        :awesomewm:
+
+
+** https://www.reddit.com/r/emacs/.rss                                :emacs:

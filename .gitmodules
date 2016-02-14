@@ -10,3 +10,6 @@
 [submodule "tpm"]
 	path = tmux/tpm
 	url = git@github.com:tmux-plugins/tpm.git
+[submodule "emacs/private/tools/local/emacs-helm-ispell"]
+	path = emacs/private/tools/local/emacs-helm-ispell
+	url = git@github.com:syohex/emacs-helm-ispell.git
